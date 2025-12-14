@@ -1,0 +1,34 @@
+# Dashboard Ambiental - Desmatamento Brasil
+# Dependências do Projeto
+
+# Streamlit e visualização
+streamlit==1.29.0
+plotly==5.18.0
+folium==0.15.1
+streamlit-folium==0.15.1
+
+# Manipulação de dados
+pandas==2.1.4
+numpy==1.26.2
+geopandas==0.14.1
+
+# Requisições HTTP e APIs
+requests==2.31.0
+urllib3==2.1.0
+
+# Processamento geoespacial
+shapely==2.0.2
+pyproj==3.6.1
+fiona==1.9.5
+
+# Análise e estatística
+scipy==1.11.4
+scikit-learn==1.3.2
+
+# Utilidades
+python-dotenv==1.0.0
+pyyaml==6.0.1
+tqdm==4.66.1
+
+# Cache e performance
+streamlit-option-menu==0.3.6

@@ -1,0 +1,61 @@
+# Compliance LGPD - Auditoria de Dados
+# Python 3.10+
+
+# Core
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Data Validation & Quality
+great-expectations>=0.18.0
+pandera>=0.17.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Data Profiling
+ydata-profiling>=4.6.0
+sweetviz>=2.3.0
+
+# Anonymization & Privacy
+faker>=22.0.0
+hashlib  # built-in
+cryptography>=41.0.0
+
+# Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.9
+
+# Report Generation
+jinja2>=3.1.0
+weasyprint>=60.0
+markdown>=3.5.0
+fpdf2>=2.7.0
+
+# Excel/CSV
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+
+# Logging
+loguru>=0.7.2
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# CLI
+click>=8.1.0
+rich>=13.7.0
+typer>=0.9.0
+
+# Visualization
+matplotlib>=3.8.0
+seaborn>=0.13.0
+plotly>=5.18.0
+
+# Jupyter
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+pyyaml>=6.0.1
