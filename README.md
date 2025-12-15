@@ -66,17 +66,17 @@ Desmatamento Brasil
 
 ## Notebooks Demonstrativos
 
-Cada projeto possui um notebook interativo com visualizacoes Plotly. **Clique em "Ver no nbviewer"** para visualizar os graficos:
+Cada projeto possui um notebook interativo com visualizacoes Plotly. **Clique para abrir no Google Colab** e executar:
 
-| # | Projeto | Notebook | Visualizar |
-|:-:|---------|----------|:----------:|
-| 1 | ETL IBGE | `demo_etl_ibge.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb) |
-| 2 | Dashboard Ambiental | `demo_desmatamento.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb) |
-| 3 | Modelo Preditivo | `demo_modelo_safras.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) |
-| 4 | Integracao Multissetorial | `demo_dados_piaui.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) |
-| 5 | Compliance LGPD | `demo_compliance_lgpd.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) |
+| # | Projeto | Notebook | Executar |
+|:-:|---------|----------|:--------:|
+| 1 | ETL IBGE | `demo_etl_ibge.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb) |
+| 2 | Dashboard Ambiental | `demo_desmatamento.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb) |
+| 3 | Modelo Preditivo | `demo_modelo_safras.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) |
+| 4 | Integracao Multissetorial | `demo_dados_piaui.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) |
+| 5 | Compliance LGPD | `demo_compliance_lgpd.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) |
 
-> Graficos interativos Plotly - use os links acima para visualizar corretamente.
+> Clique no badge para abrir no Google Colab e execute todas as celulas (Runtime > Run all).
 
 ---
 
