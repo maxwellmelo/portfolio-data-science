@@ -1,0 +1,8 @@
+# Dashboard Executivo Piaui - Dependencies
+dash==2.14.2
+dash-bootstrap-components==1.5.0
+plotly==5.18.0
+pandas==2.1.4
+numpy==1.26.2
+requests==2.31.0
+gunicorn==21.2.0

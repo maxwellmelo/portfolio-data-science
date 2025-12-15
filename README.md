@@ -10,9 +10,9 @@
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3+-F7931E.svg?style=flat&logo=scikit-learn&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-### Portfolio completo de Ciencia de Dados com 5 projetos end-to-end
+### Portfolio completo de Ciencia de Dados com 6 projetos end-to-end
 
-**ETL | Machine Learning | Dashboards | APIs REST | Data Privacy**
+**ETL | Machine Learning | Dashboards | APIs REST | Data Privacy | Business Intelligence**
 
 ### [Ver Portfolio Online](https://maxwellmelo.github.io/portfolio-data-science/)
 
@@ -28,7 +28,7 @@
 <tr>
 <td align="center" width="20%">
 
-**5 Projetos**
+**6 Projetos**
 
 Completos end-to-end
 
@@ -44,7 +44,7 @@ Modelo ML Safras
 
 **224 Municipios**
 
-Dados IBGE Piaui
+Dashboard BI Piaui
 
 </td>
 <td align="center" width="20%">
@@ -56,9 +56,9 @@ Anonimizacao LGPD
 </td>
 <td align="center" width="20%">
 
-**6 Biomas**
+**Plotly Dash**
 
-Desmatamento Brasil
+Dashboard Executivo
 
 </td>
 </tr>
@@ -77,6 +77,7 @@ Visualize os resultados de cada projeto diretamente no navegador (sem executar c
 | 3 | Modelo Preditivo | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto3-modelo-preditivo.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) |
 | 4 | Integracao Multissetorial | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto4-integracao-multissetorial.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) |
 | 5 | Compliance LGPD | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto5-compliance-lgpd.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) |
+| 6 | Dashboard Executivo Piaui | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto6-dashboard-executivo.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto6-dashboard-executivo-piaui/notebooks/demo_dashboard.ipynb) |
 
 > **Ver Pagina**: Visualize graficos e resultados sem executar codigo
 > **Colab**: Execute o notebook completo no Google Colab
@@ -88,7 +89,7 @@ Visualize os resultados de cada projeto diretamente no navegador (sem executar c
 Portfolio demonstrando competencias em todo o ciclo de vida de projetos de dados: desde a extracao e transformacao (ETL), passando por analise exploratoria e modelagem preditiva, ate a disponibilizacao via APIs e dashboards interativos.
 
 **Diferenciais:**
-- 5 projetos completos com **dados publicos brasileiros**
+- 6 projetos completos com **dados publicos brasileiros**
 - **Dados reais do IBGE** integrados via API SIDRA
 - Notebooks com **visualizacoes interativas** (Plotly)
 - Boas praticas: testes, logging, documentacao
@@ -233,6 +234,38 @@ TIPOS DE PII DETECTADOS: 15+
 
 ---
 
+### 6. Dashboard Executivo - Indicadores Socioeconomicos do Piaui
+
+<img src="https://img.shields.io/badge/Status-Completo-success" /> <img src="https://img.shields.io/badge/Plotly_Dash-2.14+-3F4F75" /> <img src="https://img.shields.io/badge/Dados-IBGE_Real-009c3b" />
+
+**Localizacao**: [`projeto6-dashboard-executivo-piaui/`](projeto6-dashboard-executivo-piaui/)
+
+Dashboard executivo interativo desenvolvido para apoiar **tomada de decisao em politicas publicas** no Estado do Piaui. Integra dados oficiais do IBGE com visualizacoes interativas dos principais indicadores socioeconomicos dos 224 municipios piauienses.
+
+| Caracteristica | Descricao |
+|----------------|-----------|
+| **Tecnologias** | Plotly Dash, Dash Bootstrap Components, Pandas |
+| **Dados** | IBGE SIDRA (PIB, Populacao, 224 municipios) |
+| **Notebook** | [demo_dashboard.ipynb](projeto6-dashboard-executivo-piaui/notebooks/demo_dashboard.ipynb) |
+
+```
+FUNCIONALIDADES
+   3 Paginas: Visao Geral, Multissetorial, Municipal
+   Filtros interativos por mesorregiao
+   Cross-filtering entre visualizacoes
+   Exportacao de dados CSV
+   Design responsivo
+
+CONTEXTO DO PIAUI
+   Populacao: ~3.3 milhoes
+   Municipios: 224 (73% < 10 mil habitantes)
+   Projeto Pilares II (Banco Mundial)
+```
+
+[Ver Documentacao Completa](projeto6-dashboard-executivo-piaui/README.md)
+
+---
+
 ## Tecnologias e Competencias
 
 ### Stack Principal
@@ -251,12 +284,12 @@ TIPOS DE PII DETECTADOS: 15+
 
 | Habilidade | Projetos |
 |------------|----------|
-| **ETL & Data Engineering** | 1, 4 |
+| **ETL & Data Engineering** | 1, 4, 6 |
 | **Machine Learning** | 3 |
 | **APIs REST** | 4 |
-| **Dashboards** | 2 |
+| **Dashboards / BI** | 2, 6 |
 | **Data Privacy** | 5 |
-| **Visualizacao de Dados** | 1, 2, 3, 4, 5 |
+| **Visualizacao de Dados** | 1, 2, 3, 4, 5, 6 |
 
 ---
 
@@ -287,10 +320,16 @@ Portifolio-cienciadedados/
 │   ├── notebooks/demo_dados_piaui.ipynb
 │   └── data/real/  (dados IBGE)
 │
-└── projeto5-compliance-lgpd/              # Compliance LGPD
-    ├── src/scanners/, anonymizers/, reporters/
-    ├── notebooks/demo_compliance_lgpd.ipynb
-    └── tests/
+├── projeto5-compliance-lgpd/              # Compliance LGPD
+│   ├── src/scanners/, anonymizers/, reporters/
+│   ├── notebooks/demo_compliance_lgpd.ipynb
+│   └── tests/
+│
+└── projeto6-dashboard-executivo-piaui/    # Dashboard BI Piaui
+    ├── app.py
+    ├── data/load_data.py
+    ├── components/charts.py
+    └── notebooks/demo_dashboard.ipynb
 ```
 
 ---
@@ -344,6 +383,7 @@ python main.py scan data/input/sample_data.csv --report
 | 3 | Modelo Preditivo | Completo | [Demo](projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) | PAM/IBGE | Pytest |
 | 4 | Integracao Multissetorial | Completo | [Demo](projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) | IBGE Real | Pytest |
 | 5 | Compliance LGPD | Completo | [Demo](projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) | Sintetico | Pytest |
+| 6 | Dashboard Executivo Piaui | Completo | [Demo](projeto6-dashboard-executivo-piaui/notebooks/demo_dashboard.ipynb) | IBGE Real | - |
 
 ---
 
@@ -353,21 +393,21 @@ python main.py scan data/input/sample_data.csv --report
 <tr>
 <td align="center">
 
-**5**
+**6**
 
 Projetos Completos
 
 </td>
 <td align="center">
 
-**5**
+**6**
 
 Notebooks Interativos
 
 </td>
 <td align="center">
 
-**30+**
+**35+**
 
 Tecnologias
 
@@ -393,6 +433,7 @@ Testes Automatizados
 | 3 | IBGE - SIDRA (PAM) | Real | sidra.ibge.gov.br |
 | 4 | IBGE - SIDRA | Real + Sintetico | sidra.ibge.gov.br |
 | 5 | Faker | Sintetico | - |
+| 6 | IBGE - SIDRA (PIB, Pop) | Real | sidra.ibge.gov.br |
 
 ---
 

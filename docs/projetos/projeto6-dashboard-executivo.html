@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Executivo Piaui - Portfolio Data Science</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .piaui-header {
+            background: linear-gradient(135deg, #1e5631 0%, #2d7a46 100%);
+        }
+        .stat-card.piaui {
+            background: linear-gradient(135deg, #1e5631 0%, #2d7a46 100%);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">Portfolio Data Science</a>
+            <div class="nav-links">
+                <a href="../index.html">Inicio</a>
+                <a href="projeto1-etl-ibge.html">ETL IBGE</a>
+                <a href="projeto2-dashboard-ambiental.html">Dashboard Ambiental</a>
+                <a href="projeto3-modelo-preditivo.html">Modelo Preditivo</a>
+                <a href="projeto4-integracao-multissetorial.html">Integracao PI</a>
+                <a href="projeto5-compliance-lgpd.html">Compliance LGPD</a>
+                <a href="projeto6-dashboard-executivo.html">Dashboard Executivo</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="header piaui-header">
+        <h1>Dashboard Executivo - Piaui</h1>
+        <p>Indicadores Socioeconomicos para Apoio a Decisao em Politicas Publicas</p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-primary">Plotly Dash</span>
+            <span class="badge badge-secondary">IBGE Real</span>
+            <span class="badge badge-success">224 Municipios</span>
+            <span class="badge badge-warning">BI Governamental</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card piaui">
+                <span class="stat-value">3.28M</span>
+                <span class="stat-label">Populacao Total</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f4d03f 0%, #d4ac0d 100%); color: #2c3e50;">
+                <span class="stat-value">R$ 64 bi</span>
+                <span class="stat-label">PIB Total (2021)</span>
+            </div>
+            <div class="stat-card success">
+                <span class="stat-value">R$ 19.5k</span>
+                <span class="stat-label">PIB per Capita</span>
+            </div>
+            <div class="stat-card secondary">
+                <span class="stat-value">224</span>
+                <span class="stat-label">Municipios</span>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2 class="section-title">Sobre o Projeto</h2>
+            <div class="card">
+                <p>Dashboard executivo desenvolvido para apoiar <strong>tomada de decisao em politicas publicas</strong> no Estado do Piaui. A ferramenta integra dados oficiais do IBGE e fornece visualizacoes interativas dos principais indicadores socioeconomicos dos 224 municipios piauienses.</p>
+
+                <div class="insights-box">
+                    <h4>Contexto do Piaui</h4>
+                    <ul>
+                        <li><strong>2o menor PIB per capita do Brasil</strong> - desafio de desenvolvimento</li>
+                        <li><strong>73% dos municipios</strong> com menos de 10 mil habitantes</li>
+                        <li><strong>Teresina concentra 37%</strong> do PIB estadual</li>
+                        <li><strong>Projeto Pilares II</strong> (Banco Mundial) visa melhorar gestao publica</li>
+                    </ul>
+                </div>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Python 3.11+</span>
+                    <span class="tech-tag">Plotly Dash</span>
+                    <span class="tech-tag">Dash Bootstrap</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">IBGE SIDRA</span>
+                    <span class="tech-tag">Gunicorn</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Top 10 Municipios por PIB</h2>
+            <div class="card">
+                <div id="chart-top-pib" class="chart-container"></div>
+                <div class="insights-box">
+                    <h4>Concentracao Economica</h4>
+                    <ul>
+                        <li>Teresina concentra 37.3% do PIB estadual</li>
+                        <li>Top 5 municipios = 47% do PIB total</li>
+                        <li>Top 10 municipios = 57% do PIB total</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Distribuicao por Mesorregiao</h2>
+            <div class="card">
+                <div id="chart-mesorregiao" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Relacao PIB x Populacao</h2>
+            <div class="card">
+                <div id="chart-scatter" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Comparativo entre Mesorregioes</h2>
+            <div class="card">
+                <div id="chart-comparativo" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Funcionalidades do Dashboard</h2>
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pagina</th>
+                                <th>Funcionalidades</th>
+                                <th>Visualizacoes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Visao Geral</strong></td>
+                                <td>KPIs, filtros por mesorregiao, exportacao CSV</td>
+                                <td>4 graficos interativos</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Multissetorial</strong></td>
+                                <td>Analise cruzada de indicadores</td>
+                                <td>Scatter, correlacao, tabela</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Foco Municipal</strong></td>
+                                <td>Selecao de municipio especifico</td>
+                                <td>Perfil, ranking, comparativo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-top: 1.5rem;">Recursos Interativos</h4>
+                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                    <li>Filtros dinamicos por mesorregiao e populacao</li>
+                    <li>Cross-filtering entre visualizacoes</li>
+                    <li>Exportacao de dados para CSV</li>
+                    <li>Navegacao multi-pagina</li>
+                    <li>Design responsivo (mobile-friendly)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Dados dos Municipios</h2>
+            <div class="card">
+                <div id="chart-tabela" class="chart-container" style="min-height: 500px;"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Casos de Uso</h2>
+            <div class="card">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1e5631;">
+                        <h4 style="color: #1e5631;">Planejamento Orcamentario</h4>
+                        <p style="color: #6c757d; margin: 0;">Identificar municipios com baixo PIB per capita para priorizar repasses estaduais.</p>
+                    </div>
+                    <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #f4d03f;">
+                        <h4 style="color: #2c3e50;">Analise Regional</h4>
+                        <p style="color: #6c757d; margin: 0;">Comparar desempenho de mesorregioes para direcionar politicas setoriais.</p>
+                    </div>
+                    <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #18A558;">
+                        <h4 style="color: #18A558;">Monitoramento</h4>
+                        <p style="color: #6c757d; margin: 0;">Acompanhar evolucao de indicadores e avaliar impacto de programas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Como Executar</h2>
+            <div class="card">
+                <div class="code-block">
+<span class="comment"># Clone o repositorio</span>
+git clone https://github.com/maxwellmelo/portfolio-data-science.git
+
+<span class="comment"># Acesse o projeto</span>
+cd portfolio-data-science/projeto6-dashboard-executivo-piaui
+
+<span class="comment"># Instale dependencias</span>
+pip install -r requirements.txt
+
+<span class="comment"># Execute o dashboard</span>
+python app.py
+
+<span class="comment"># Acesse: http://localhost:8050</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Acessar Projeto</h2>
+            <div class="card" style="text-align: center;">
+                <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto6-dashboard-executivo-piaui/notebooks/demo_dashboard.ipynb" class="btn btn-primary" target="_blank">
+                    Executar no Google Colab
+                </a>
+                <a href="https://github.com/maxwellmelo/portfolio-data-science/tree/main/projeto6-dashboard-executivo-piaui" class="btn btn-outline" target="_blank" style="margin-left: 1rem;">
+                    Ver Codigo no GitHub
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Desenvolvido por <strong>Maxwell</strong> - Especialista em Dados</p>
+        <p style="margin-top: 0.5rem;"><a href="https://github.com/maxwellmelo/portfolio-data-science" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script>
+        // Cores do Piaui
+        var corPrimaria = '#1e5631';
+        var corSecundaria = '#f4d03f';
+
+        // Top 10 PIB
+        var topPibData = [{
+            type: 'bar',
+            x: [23.9, 3.2, 2.8, 2.1, 1.9, 1.6, 1.4, 1.2, 1.1, 0.9],
+            y: ['Teresina', 'Parnaiba', 'Picos', 'Floriano', 'Piripiri', 'Campo Maior', 'Bom Jesus', 'Corrente', 'Oeiras', 'Altos'],
+            orientation: 'h',
+            marker: {color: corPrimaria},
+            text: ['R$ 23.9 bi', 'R$ 3.2 bi', 'R$ 2.8 bi', 'R$ 2.1 bi', 'R$ 1.9 bi', 'R$ 1.6 bi', 'R$ 1.4 bi', 'R$ 1.2 bi', 'R$ 1.1 bi', 'R$ 0.9 bi'],
+            textposition: 'outside'
+        }];
+
+        var topPibLayout = {
+            title: {text: 'Top 10 Municipios por PIB (2021)', x: 0.5, font: {size: 16}},
+            xaxis: {title: 'PIB (Bilhoes R$)'},
+            yaxis: {autorange: 'reversed'},
+            height: 450,
+            margin: {l: 100}
+        };
+
+        Plotly.newPlot('chart-top-pib', topPibData, topPibLayout, {responsive: true});
+
+        // Mesorregiao
+        var mesoData = [{
+            type: 'pie',
+            labels: ['Centro-Norte Piauiense', 'Norte Piauiense', 'Sudoeste Piauiense', 'Sudeste Piauiense'],
+            values: [1850000, 650000, 450000, 330000],
+            marker: {colors: [corPrimaria, corSecundaria, '#3498db', '#e74c3c']},
+            hole: 0.4,
+            textinfo: 'label+percent',
+            textposition: 'outside'
+        }];
+
+        var mesoLayout = {
+            title: {text: 'Distribuicao Populacional por Mesorregiao', x: 0.5, font: {size: 16}},
+            height: 450,
+            showlegend: false
+        };
+
+        Plotly.newPlot('chart-mesorregiao', mesoData, mesoLayout, {responsive: true});
+
+        // Scatter PIB x Populacao
+        var municipios = ['Teresina', 'Parnaiba', 'Picos', 'Floriano', 'Piripiri', 'Campo Maior', 'Bom Jesus', 'Altos', 'Barras', 'Jose de Freitas'];
+        var populacoes = [868000, 153000, 78000, 59000, 63000, 48000, 28000, 41000, 46000, 40000];
+        var pibs = [23900000, 3200000, 1800000, 1200000, 900000, 750000, 650000, 500000, 480000, 450000];
+        var pibsPerCapita = pibs.map((p, i) => p * 1000 / populacoes[i]);
+
+        var scatterData = [{
+            type: 'scatter',
+            mode: 'markers',
+            x: populacoes,
+            y: pibs,
+            marker: {
+                size: pibsPerCapita.map(p => Math.sqrt(p) / 3),
+                color: corPrimaria,
+                opacity: 0.7
+            },
+            text: municipios,
+            hovertemplate: '<b>%{text}</b><br>Populacao: %{x:,.0f}<br>PIB: R$ %{y:,.0f} mil<extra></extra>'
+        }];
+
+        var scatterLayout = {
+            title: {text: 'Relacao PIB x Populacao', x: 0.5, font: {size: 16}},
+            xaxis: {title: 'Populacao', type: 'log'},
+            yaxis: {title: 'PIB (Mil R$)', type: 'log'},
+            height: 450
+        };
+
+        Plotly.newPlot('chart-scatter', scatterData, scatterLayout, {responsive: true});
+
+        // Comparativo Mesorregioes
+        var compData = [
+            {
+                type: 'bar',
+                name: 'PIB (Bilhoes)',
+                x: ['Centro-Norte', 'Norte', 'Sudoeste', 'Sudeste'],
+                y: [35.2, 12.8, 9.5, 6.5],
+                marker: {color: corPrimaria}
+            },
+            {
+                type: 'bar',
+                name: 'PIB per Capita (Mil R$)',
+                x: ['Centro-Norte', 'Norte', 'Sudoeste', 'Sudeste'],
+                y: [19.0, 19.7, 21.1, 19.7],
+                marker: {color: corSecundaria},
+                yaxis: 'y2'
+            }
+        ];
+
+        var compLayout = {
+            title: {text: 'Comparativo entre Mesorregioes', x: 0.5, font: {size: 16}},
+            barmode: 'group',
+            yaxis: {title: 'PIB (Bilhoes R$)'},
+            yaxis2: {title: 'PIB per Capita (Mil R$)', overlaying: 'y', side: 'right'},
+            height: 400,
+            legend: {orientation: 'h', y: -0.15}
+        };
+
+        Plotly.newPlot('chart-comparativo', compData, compLayout, {responsive: true});
+
+        // Tabela
+        var tabelaData = [{
+            type: 'table',
+            header: {
+                values: ['<b>Municipio</b>', '<b>Mesorregiao</b>', '<b>Populacao</b>', '<b>PIB (Milhoes)</b>', '<b>PIB per Capita</b>'],
+                fill: {color: corPrimaria},
+                font: {color: 'white', size: 12},
+                align: 'left'
+            },
+            cells: {
+                values: [
+                    ['Teresina', 'Parnaiba', 'Picos', 'Floriano', 'Piripiri', 'Campo Maior', 'Bom Jesus', 'Corrente', 'Oeiras', 'Altos'],
+                    ['Centro-Norte', 'Norte', 'Sudeste', 'Sudoeste', 'Norte', 'Centro-Norte', 'Sudoeste', 'Sudoeste', 'Centro-Norte', 'Centro-Norte'],
+                    ['868.000', '153.000', '78.000', '59.000', '63.000', '48.000', '28.000', '27.000', '36.000', '41.000'],
+                    ['R$ 23.900', 'R$ 3.200', 'R$ 1.800', 'R$ 1.200', 'R$ 900', 'R$ 750', 'R$ 650', 'R$ 580', 'R$ 550', 'R$ 500'],
+                    ['R$ 27.540', 'R$ 20.915', 'R$ 23.077', 'R$ 20.339', 'R$ 14.286', 'R$ 15.625', 'R$ 23.214', 'R$ 21.481', 'R$ 15.278', 'R$ 12.195']
+                ],
+                fill: {color: [['white', '#f8f9fa', 'white', '#f8f9fa', 'white', '#f8f9fa', 'white', '#f8f9fa', 'white', '#f8f9fa']]},
+                align: 'left',
+                font: {size: 11}
+            }
+        }];
+
+        var tabelaLayout = {
+            title: {text: 'Top 10 Municipios do Piaui', x: 0.5, font: {size: 16}},
+            height: 450
+        };
+
+        Plotly.newPlot('chart-tabela', tabelaData, tabelaLayout, {responsive: true});
+    </script>
+</body>
+</html>
