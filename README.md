@@ -66,17 +66,17 @@ Desmatamento Brasil
 
 ## Notebooks Demonstrativos
 
-Cada projeto possui um notebook interativo com visualizacoes Plotly para demonstrar o funcionamento:
+Cada projeto possui um notebook interativo com visualizacoes Plotly. **Clique em "Ver no nbviewer"** para visualizar os graficos:
 
-| # | Projeto | Notebook | Principais Visualizacoes |
-|:-:|---------|----------|--------------------------|
-| 1 | ETL IBGE | [`demo_etl_ibge.ipynb`](projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb) | Treemap, evolucao temporal, top estados |
-| 2 | Dashboard Ambiental | [`demo_desmatamento.ipynb`](projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb) | KPIs, area empilhada, heatmap biomas |
-| 3 | Modelo Preditivo | [`demo_modelo_safras.ipynb`](projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) | Correlacao, comparacao modelos, scatter |
-| 4 | Integracao Multissetorial | [`demo_dados_piaui.ipynb`](projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) | PIB real, populacao, distribuicoes |
-| 5 | Compliance LGPD | [`demo_compliance_lgpd.ipynb`](projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) | Scan PII, anonimizacao, verificacao |
+| # | Projeto | Notebook | Visualizar |
+|:-:|---------|----------|:----------:|
+| 1 | ETL IBGE | `demo_etl_ibge.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb) |
+| 2 | Dashboard Ambiental | `demo_desmatamento.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb) |
+| 3 | Modelo Preditivo | `demo_modelo_safras.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) |
+| 4 | Integracao Multissetorial | `demo_dados_piaui.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) |
+| 5 | Compliance LGPD | `demo_compliance_lgpd.ipynb` | [![nbviewer](https://img.shields.io/badge/ver-nbviewer-orange)](https://nbviewer.org/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) |
 
-> Todos os notebooks usam **Plotly** para graficos interativos e dados reais ou sinteticos realistas.
+> Graficos interativos Plotly - use os links acima para visualizar corretamente.
 
 ---
 
