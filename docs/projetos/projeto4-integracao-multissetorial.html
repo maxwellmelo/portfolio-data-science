@@ -23,13 +23,13 @@
     </nav>
 
     <header class="header" style="background: linear-gradient(135deg, #009688 0%, #00695c 100%);">
-        <h1>Integracao Multissetorial - Piaui</h1>
-        <p>API REST para Dados Governamentais com Dados Reais do IBGE</p>
+        <h1>Sistema Integrado de Dados do Piaui - Prototipo BDG</h1>
+        <p>API REST Multissetorial para Gestao de Politicas Publicas</p>
         <div style="margin-top: 1rem;">
             <span class="badge badge-primary">FastAPI</span>
-            <span class="badge badge-secondary">IBGE Real</span>
+            <span class="badge badge-secondary">4 Setores</span>
             <span class="badge badge-success">224 Municipios</span>
-            <span class="badge badge-warning">REST API</span>
+            <span class="badge badge-warning">20+ Endpoints</span>
         </div>
     </header>
 
@@ -48,7 +48,7 @@
                 <span class="stat-label">Populacao</span>
             </div>
             <div class="stat-card warning">
-                <span class="stat-value">13</span>
+                <span class="stat-value">20+</span>
                 <span class="stat-label">Endpoints API</span>
             </div>
         </div>
@@ -56,13 +56,25 @@
         <section class="section">
             <h2 class="section-title">Sobre o Projeto</h2>
             <div class="card">
-                <p>Plataforma de integracao de dados governamentais de multiplos setores do estado do <strong>Piaui</strong>, com dados reais do IBGE integrados via API SIDRA. A API REST oferece endpoints para consulta de <strong>PIB</strong>, <strong>populacao</strong>, saude e educacao.</p>
+                <p>Prototipo de <strong>Banco de Dados Geografico Multissetorial (BDG)</strong> para apoio a gestao de politicas publicas do Piaui. Integra dados de <strong>4 setores governamentais</strong>: Economia (IBGE real), Saude (DATASUS), Educacao (INEP) e Assistencia Social (MDS).</p>
 
                 <div class="insights-box">
-                    <h4>Fontes de Dados</h4>
+                    <h4>Setores Integrados</h4>
                     <ul>
-                        <li><strong>Dados Reais IBGE:</strong> PIB Municipal (448 registros) + Populacao (896 registros)</li>
-                        <li><strong>Dados Sinteticos:</strong> Saude, Educacao, Assistencia Social (demonstracao)</li>
+                        <li><strong>Economia (IBGE Real):</strong> PIB Municipal, PIB per capita, Populacao</li>
+                        <li><strong>Saude:</strong> Mortalidade infantil, Cobertura vacinal, Leitos SUS</li>
+                        <li><strong>Educacao:</strong> IDEB, Escolas, Matriculas, Taxa de aprovacao</li>
+                        <li><strong>Assistencia:</strong> CadUnico, Beneficiarios, Taxa de pobreza</li>
+                    </ul>
+                </div>
+
+                <div class="insights-box" style="margin-top: 1rem; background: #e8f5e9;">
+                    <h4>Funcionalidades de Analise</h4>
+                    <ul>
+                        <li><strong>Correlacao:</strong> Relacoes entre PIB, IDEB e mortalidade</li>
+                        <li><strong>Vulnerabilidade:</strong> Indice multidimensional calculado</li>
+                        <li><strong>Prioridade:</strong> Ranking de municipios para investimento</li>
+                        <li><strong>Mesorregioes:</strong> Comparativo entre 4 regioes do estado</li>
                     </ul>
                 </div>
 

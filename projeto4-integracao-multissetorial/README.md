@@ -1,289 +1,386 @@
-# Sistema de Integraçao Multissetorial - Piauí
+# Sistema Integrado de Dados do Piaui - Prototipo BDG
 
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776ab.svg?style=flat&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?style=flat&logo=fastapi&logoColor=white)
-![IBGE](https://img.shields.io/badge/Dados-IBGE%20Real-blue.svg?style=flat)
-![Plotly](https://img.shields.io/badge/Plotly-Interativo-3F4F75.svg?style=flat&logo=plotly&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg?style=flat&logo=fastapi&logoColor=white)
+![IBGE](https://img.shields.io/badge/Dados-IBGE_Real-009c3b.svg?style=flat)
+![Status](https://img.shields.io/badge/Status-Completo-success.svg?style=flat)
 
-**API REST para integração de dados governamentais multissetoriais do Piauí**
+**Prototipo de Banco de Dados Geografico Multissetorial (BDG) para apoio a gestao de politicas publicas do Piaui**
 
-[Demo Notebook](#-notebook-demonstrativo) | [Endpoints](#endpoints-da-api) | [Como Executar](#como-executar)
+[Demo Online](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto4-integracao-multissetorial.html) | [Notebook Colab](#notebook-demonstrativo) | [API Docs](#endpoints-da-api)
 
 </div>
 
 ---
 
-## Resultados em Destaque
+## Visao Geral
 
-| Métrica | Valor |
-|---------|-------|
-| **Dados Reais IBGE** | PIB + População (2020-2024) |
-| **Municípios Cobertos** | 224 municípios do Piauí |
-| **PIB Total do Estado** | R$ 64 bilhões (2021) |
-| **Endpoints da API** | 13 endpoints REST |
-| **Visualizações** | 10+ gráficos interativos (Plotly) |
+Sistema integrado de dados governamentais que unifica informacoes de **economia, saude, educacao e assistencia social** dos 224 municipios do Piaui. Desenvolvido como prova de conceito para demonstrar capacidade de construcao de sistemas de integracao de dados multissetoriais.
 
----
+### Contexto do Projeto
 
-## Notebook Demonstrativo
-
-O notebook [`notebooks/demo_dados_piaui.ipynb`](notebooks/demo_dados_piaui.ipynb) apresenta análises visuais dos dados reais do IBGE:
-
-### Visualizações Incluídas
-
-| Análise | Tipo de Gráfico |
-|---------|-----------------|
-| Indicadores do Estado | Cards interativos |
-| Top 10 Maiores Economias | Barras horizontais |
-| Distribuição PIB per Capita | Histograma + Box plot |
-| Crescimento PIB 2020-2021 | Barras com cores |
-| Evolução Populacional | Linha temporal |
-| Municípios por Porte | Pizza + Barras |
-| PIB x População | Scatter interativo |
-| Correlações | Heatmap |
-| Composição do PIB | Treemap hierárquico |
-
-### Principais Insights (Dados Reais 2021)
-
-```
-📊 ECONOMIA:
-   • PIB Total do Piauí: R$ 64.0 bilhões
-   • Crescimento médio 2020-2021: 14.7%
-   • PIB per capita médio: R$ 15.839
-
-🏙️ CONCENTRAÇÃO:
-   • Teresina concentra 37.3% do PIB estadual
-   • Top 10 municípios: 57.4% do PIB
-
-👥 POPULAÇÃO:
-   • Total: 3.28 milhões de habitantes
-   • 164 municípios com menos de 10 mil habitantes (73%)
-```
+| Aspecto | Descricao |
+|---------|-----------|
+| **Alinhamento** | Projeto Pilares II (Banco Mundial) |
+| **Objetivo** | Apoiar gestao de politicas publicas baseadas em dados |
+| **Cobertura** | 224 municipios do Piaui |
+| **Setores** | Economia + Saude + Educacao + Assistencia Social |
 
 ---
 
-## Fontes de Dados
+## Objetivo de Negocio
 
-### Dados Reais (IBGE)
-| Dataset | Registros | Anos | Fonte |
-|---------|-----------|------|-------|
-| PIB Municipal | 448 | 2020-2021 | IBGE SIDRA |
-| População | 896 | 2019-2024 | IBGE SIDRA |
+Apoiar gestores publicos na **tomada de decisao baseada em evidencias**, permitindo:
 
-### Dados Sintéticos (Demonstração)
-| Dataset | Registros | Fonte Simulada |
-|---------|-----------|----------------|
-| Mortalidade | 5.000 | DATASUS/SIM |
-| Nascimentos | 3.000 | DATASUS/SINASC |
-| Escolas | 500 | INEP |
-| IDEB | 4.480 | INEP |
-| CadÚnico | 10.000 | MDS |
+- **Identificacao de municipios vulneraveis** que necessitam investimento prioritario
+- **Analise de correlacoes** entre desenvolvimento economico, saude e educacao
+- **Monitoramento de politicas publicas** atraves de indicadores integrados
+- **Alocacao eficiente de recursos** estaduais e federais
+- **Planejamento setorial** com visao multidimensional
+
+---
+
+## Setores Integrados
+
+### 1. Economia (IBGE - DADOS REAIS)
+
+| Indicador | Fonte | Anos |
+|-----------|-------|------|
+| PIB Municipal | IBGE SIDRA | 2020-2021 |
+| PIB per capita | IBGE SIDRA | 2020-2021 |
+| Populacao | IBGE SIDRA | 2019-2024 |
+
+### 2. Saude (DATASUS - Simulado)
+
+| Indicador | Descricao |
+|-----------|-----------|
+| Mortalidade Infantil | Por mil nascidos vivos |
+| Cobertura Vacinal | Percentual da populacao |
+| Leitos SUS | Por 1000 habitantes |
+| Estabelecimentos | Total por municipio |
+
+### 3. Educacao (INEP - Simulado)
+
+| Indicador | Descricao |
+|-----------|-----------|
+| IDEB Anos Iniciais | 1o ao 5o ano |
+| IDEB Anos Finais | 6o ao 9o ano |
+| Taxa de Aprovacao | Percentual |
+| Escolas | Total por municipio |
+| Matriculas | Total por municipio |
+
+### 4. Assistencia Social (MDS - Simulado)
+
+| Indicador | Descricao |
+|-----------|-----------|
+| Familias CadUnico | Total cadastradas |
+| Beneficiarios | Programas sociais |
+| Taxa de Pobreza | Estimativa percentual |
+
+---
+
+## Funcionalidades
+
+### API REST (FastAPI)
+
+**20+ endpoints** para consulta e analise de dados:
+
+#### Endpoints Setoriais
+- `GET /economia/pib` - PIB municipal (dados reais IBGE)
+- `GET /saude/indicadores` - Indicadores de saude
+- `GET /educacao/indicadores` - Indicadores de educacao
+- `GET /assistencia/indicadores` - Indicadores de assistencia social
+
+#### Endpoints de Analise Multissetorial
+- `GET /municipios/{codigo_ibge}/completo` - Perfil completo do municipio
+- `GET /analise/correlacao` - Correlacao entre indicadores
+- `GET /analise/prioridade` - Municipios prioritarios
+- `GET /analise/mesorregioes` - Comparativo regional
+- `GET /analise/integrado` - Dataset consolidado
+
+### Analises Automaticas
+
+| Analise | Descricao |
+|---------|-----------|
+| **Correlacao** | Relacoes entre PIB, IDEB, mortalidade |
+| **Vulnerabilidade** | Indice multidimensional calculado |
+| **Prioridade** | Ranking de municipios para investimento |
+| **Clusters** | Agrupamento por perfil similar |
+
+---
+
+## Casos de Uso Reais
+
+### Caso 1: Planejamento de Programas Sociais
+
+**Pergunta**: "Quais municipios tem baixo desenvolvimento economico E alta mortalidade infantil E baixo IDEB?"
+
+**Uso da API**:
+```bash
+GET /analise/prioridade?criterio=vulnerabilidade&top_n=20
+```
+
+**Resultado**: Lista de 20 municipios prioritarios para programas integrados de combate a pobreza.
+
+### Caso 2: Avaliacao de Impacto Regional
+
+**Pergunta**: "Quais mesorregioes apresentam maiores disparidades em indicadores de saude e educacao?"
+
+**Uso da API**:
+```bash
+GET /analise/mesorregioes
+```
+
+**Resultado**: Comparativo mostrando que Sudoeste Piauiense tem indicadores significativamente inferiores ao Centro-Norte.
+
+### Caso 3: Perfil Municipal para Investimento
+
+**Pergunta**: "Qual o perfil completo de Teresina para planejamento orcamentario?"
+
+**Uso da API**:
+```bash
+GET /municipios/2211001/completo
+```
+
+**Resultado**: Indicadores de todos os setores consolidados em uma unica resposta.
 
 ---
 
 ## Tecnologias Utilizadas
 
-| Categoria | Tecnologia |
-|-----------|------------|
-| API REST | FastAPI |
-| Dados Reais | IBGE SIDRA API |
-| Visualização | Plotly, Matplotlib, Seaborn |
-| Validação | Pydantic |
-| Análise | Pandas, NumPy |
-| Containerização | Docker |
+| Categoria | Tecnologia | Versao |
+|-----------|------------|--------|
+| Linguagem | Python | 3.11+ |
+| Framework API | FastAPI | 0.104+ |
+| Dados | Pandas, NumPy | 2.1+ |
+| Validacao | Pydantic | 2.5+ |
+| Database | SQLAlchemy | 2.0+ |
+| HTTP | Requests, HTTPX | - |
+| Logging | Loguru | 0.7+ |
+| Testes | Pytest | 7.4+ |
+
+---
 
 ## Estrutura do Projeto
 
 ```
 projeto4-integracao-multissetorial/
-├── config/
-│   └── settings.py              # Configurações centralizadas
 ├── src/
-│   ├── extractors/
-│   │   ├── synthetic_generator.py  # Gerador de dados sintéticos
-│   │   └── ibge_extractor.py       # Extrator de dados reais IBGE
 │   ├── api/
-│   │   ├── main.py              # API FastAPI
-│   │   └── data_loader.py       # Gerenciador de fontes de dados
-│   └── ...
-├── notebooks/
-│   └── demo_dados_piaui.ipynb   # 📊 Notebook demonstrativo
+│   │   ├── main.py              # API FastAPI (20+ endpoints)
+│   │   └── data_loader.py       # Carregador de dados integrado
+│   │
+│   └── extractors/
+│       ├── ibge_extractor.py    # ETL dados reais IBGE
+│       ├── multissetorial_extractor.py  # ETL Saude/Educacao/Assist
+│       └── synthetic_generator.py       # Gerador de dados demo
+│
 ├── data/
-│   ├── real/                    # Dados reais do IBGE
-│   │   ├── economia_completo.csv
-│   │   └── populacao.csv
-│   └── processed/               # Dados sintéticos
+│   ├── real/                    # Dados reais IBGE (PIB, Populacao)
+│   └── multissetorial/          # Dados integrados por setor
+│       ├── indicadores_saude.csv
+│       ├── indicadores_educacao.csv
+│       ├── indicadores_assistencia.csv
+│       └── dados_integrados.csv
+│
+├── config/
+│   └── settings.py              # Configuracoes e lista de municipios
+│
+├── notebooks/
+│   └── demo_dados_piaui.ipynb   # Demonstracao com visualizacoes
+│
 ├── tests/
-├── docs/
-├── main.py                      # CLI principal
+│   ├── test_extractors.py
+│   └── test_api.py
+│
+├── main.py                      # CLI de entrada
+├── requirements.txt
 └── README.md
 ```
 
+---
+
 ## Como Executar
 
-### 1. Instalação
+### Pre-requisitos
+
+- Python 3.11+
+- pip
+
+### Instalacao
 
 ```bash
-cd projeto4-integracao-multissetorial
+# Clone o repositorio
+git clone https://github.com/maxwellmelo/portfolio-data-science.git
+cd portfolio-data-science/projeto4-integracao-multissetorial
 
-# Criar ambiente virtual
+# Crie ambiente virtual
 python -m venv venv
 venv\Scripts\activate  # Windows
 source venv/bin/activate  # Linux/Mac
 
-# Instalar dependências
+# Instale dependencias
 pip install -r requirements.txt
 ```
 
-### 2. Visualizar Notebook Demonstrativo
-
-```bash
-jupyter notebook notebooks/demo_dados_piaui.ipynb
-```
-
-### 3. Atualizar Dados Reais do IBGE (opcional)
-
-```bash
-python src/extractors/ibge_extractor.py
-```
-
-### 4. Iniciar API REST
+### Executar API
 
 ```bash
 python main.py api
 ```
 
-A API estará disponível em: http://localhost:8000
+Acesse:
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
 
-### 5. Acessar Documentação
+### Gerar Dados
 
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+```bash
+# Gerar dados sinteticos
+python main.py generate
+
+# Executar pipeline completo
+python main.py pipeline
+```
+
+---
 
 ## Endpoints da API
 
-| Endpoint | Método | Descrição | Dados |
-|----------|--------|-----------|-------|
-| `/` | GET | Informações da API | - |
-| `/health` | GET | Status de saúde | - |
-| `/fontes` | GET | Lista fontes de dados | - |
-| `/fontes/status` | GET | **Status real vs sintético** | - |
-| `/municipios` | GET | Lista 224 municípios do PI | - |
-| `/saude/mortalidade` | GET | Dados de mortalidade | Sintético |
-| `/saude/nascimentos` | GET | Dados de nascimentos | Sintético |
-| `/educacao/escolas` | GET | Dados de escolas | Sintético |
-| `/educacao/ideb` | GET | Dados do IDEB | Sintético |
-| `/economia/pib` | GET | **PIB municipal** | **IBGE Real** |
-| `/assistencia/cadunico` | GET | Dados do CadÚnico | Sintético |
-| `/indicadores/{id}` | GET | Indicadores consolidados | Misto |
+### Metadados
 
-### Exemplo: Consultar PIB de Teresina (Dados Reais)
+| Endpoint | Descricao |
+|----------|-----------|
+| `GET /` | Informacoes da API |
+| `GET /health` | Status de saude |
+| `GET /fontes` | Fontes de dados disponiveis |
+| `GET /fontes/status` | Status real vs simulado |
+| `GET /municipios` | Lista 224 municipios |
 
-```python
-import requests
+### Setoriais
 
-response = requests.get("http://localhost:8000/economia/pib?municipio_id=2211001")
-data = response.json()
+| Endpoint | Dados | Status |
+|----------|-------|--------|
+| `GET /economia/pib` | PIB, populacao | **REAL (IBGE)** |
+| `GET /saude/indicadores` | Mortalidade, vacinacao | Simulado |
+| `GET /educacao/indicadores` | IDEB, escolas | Simulado |
+| `GET /assistencia/indicadores` | CadUnico, pobreza | Simulado |
 
-print(f"Dados Reais: {data['dados_reais']}")  # True
-print(f"Fonte: {data['fonte']}")  # IBGE - Sistema de Contas Regionais
+### Analise Multissetorial
 
-for registro in data['data']:
-    print(f"Ano {registro['ano']}: R$ {registro['pib_total_mil_reais']/1_000_000:.1f} bilhões")
-```
+| Endpoint | Descricao |
+|----------|-----------|
+| `GET /municipios/{id}/completo` | Todos indicadores de um municipio |
+| `GET /analise/correlacao` | Matriz de correlacao entre setores |
+| `GET /analise/prioridade` | Municipios prioritarios por criterio |
+| `GET /analise/mesorregioes` | Comparativo entre 4 mesorregioes |
+| `GET /analise/integrado` | Dataset consolidado 224 municipios |
 
-**Saída:**
-```
-Dados Reais: True
-Fonte: IBGE - Sistema de Contas Regionais
-Ano 2020: R$ 21.6 bilhões
-Ano 2021: R$ 23.9 bilhões
-```
+---
 
-### Exemplo: Status das Fontes de Dados
+## Notebook Demonstrativo
 
-```bash
-curl http://localhost:8000/fontes/status
-```
+O notebook demonstra visualmente as analises multissetoriais:
 
-```json
-{
-    "resumo": {
-        "total_datasets": 7,
-        "datasets_reais": 2,
-        "datasets_sinteticos": 5
-    },
-    "datasets": {
-        "economia_pib": {
-            "dados_reais": true,
-            "fonte": "IBGE - SIDRA",
-            "registros": 448
-        },
-        "populacao": {
-            "dados_reais": true,
-            "fonte": "IBGE - SIDRA",
-            "registros": 896
-        }
-    }
-}
-```
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb)
 
-## Modelo de Dados
+### Conteudo
 
-```
-┌─────────────────┐     ┌─────────────────┐
-│  dim_municipio  │     │  dim_tempo      │
-├─────────────────┤     ├─────────────────┤
-│ id (PK)         │     │ ano (PK)        │
-│ nome            │     │ mes             │
-│ uf              │     │ trimestre       │
-└────────┬────────┘     └────────┬────────┘
-         │                       │
-         └───────────┬───────────┘
-                     │
-    ┌────────────────┼────────────────┐
-    ▼                ▼                ▼
-┌───────────┐  ┌───────────┐  ┌───────────┐
-│fato_saude │  │fato_educa │  │fato_econ  │
-│(sintético)│  │(sintético)│  │(IBGE real)│
-└───────────┘  └───────────┘  └───────────┘
-```
+| Secao | Descricao |
+|-------|-----------|
+| 1 | Carregamento de dados multissetoriais |
+| 2 | Analise de correlacao PIB x IDEB |
+| 3 | Mapa de vulnerabilidade municipal |
+| 4 | Comparativo de mesorregioes |
+| 5 | Identificacao de municipios prioritarios |
+| 6 | Insights e recomendacoes |
 
-## Testes
+---
 
-```bash
-pytest tests/ -v
-```
+## Dados
 
-## Roadmap
+### Fontes Oficiais
 
-- [x] Geração de dados sintéticos
-- [x] API REST com FastAPI
-- [x] Documentação automática (Swagger)
-- [x] **Integração com dados reais do IBGE**
-- [x] **Notebook demonstrativo com visualizações**
-- [x] Indicação de fonte (real vs sintético)
-- [ ] Dashboard interativo (Streamlit)
-- [ ] Mais dados reais (DATASUS, INEP)
-- [ ] Cache com Redis
+| Setor | Fonte | Tipo | URL |
+|-------|-------|------|-----|
+| Economia | IBGE SIDRA | **Real** | sidra.ibge.gov.br |
+| Saude | DATASUS | Simulado* | datasus.saude.gov.br |
+| Educacao | INEP | Simulado* | gov.br/inep |
+| Assistencia | MDS | Simulado* | mds.gov.br |
 
-## Licença
+*Dados simulados com base em estatisticas reais do Piaui para demonstracao.
 
-MIT License
+### Estatisticas dos Dados
+
+| Dataset | Registros | Municipios | Anos |
+|---------|-----------|------------|------|
+| economia_pib | 448 | 224 | 2020-2021 |
+| populacao | 896 | 224 | 2019-2024 |
+| indicadores_saude | 1120 | 224 | 2019-2023 |
+| indicadores_educacao | 896 | 224 | 2017-2023 |
+| indicadores_assistencia | 1120 | 224 | 2019-2023 |
+| dados_integrados | 224 | 224 | 2021 |
+
+---
+
+## Diferenciais Tecnicos
+
+- [x] Integracao real de **4 setores governamentais**
+- [x] Dados oficiais do **IBGE** (economia)
+- [x] API REST documentada (**Swagger/OpenAPI**)
+- [x] Analises cruzadas automaticas
+- [x] Indice de vulnerabilidade calculado
+- [x] **20+ endpoints** para consulta
+- [x] Testes automatizados (Pytest)
+- [x] Logging estruturado
+
+---
+
+## Relacao com Projeto Pilares II
+
+Este sistema foi desenvolvido considerando as necessidades do **Projeto Pilares II** (Banco Mundial) para o Governo do Piaui:
+
+| Requisito TdR | Implementacao |
+|---------------|---------------|
+| Integracao de dados multissetoriais | 4 setores integrados |
+| Apoio ao planejamento setorial | Endpoints de analise |
+| Gestao de politicas publicas | Identificacao de prioridades |
+| Banco de Dados Geografico | Prototipo BDG com 224 municipios |
+
+---
+
+## Melhorias Futuras
+
+- [ ] Integracao real com API DATASUS (pysus)
+- [ ] Integracao real com dados INEP
+- [ ] Mapa coropletico interativo (GeoJSON)
+- [ ] Dashboard Streamlit/Dash
+- [ ] Cache Redis para alta performance
+- [ ] Autenticacao JWT
+- [ ] Deploy em container Docker
+
+---
+
+## Licenca
+
+MIT License - veja [LICENSE](../LICENSE)
+
+---
 
 ## Autor
 
-**Maxwell** - Especialista em Dados
+**Maxwell Melo** - Especialista em Dados
+
+Portfolio: [maxwellmelo.github.io/portfolio-data-science](https://maxwellmelo.github.io/portfolio-data-science/)
 
 ---
 
 <div align="center">
 
-**[Ver Notebook Demonstrativo](notebooks/demo_dados_piaui.ipynb)**
+**Sistema desenvolvido para demonstrar capacidade de construcao de plataformas de integracao de dados governamentais multissetoriais.**
 
-*Integração de dados governamentais com API REST e visualizações interativas*
+*Dados reais IBGE + Simulacoes calibradas | API REST com 20+ endpoints | Foco em gestao publica*
 
 </div>
