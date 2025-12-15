@@ -108,9 +108,11 @@ class ModelTrainer:
             "learning_rate": [0.01, 0.1, 0.2]
         },
         "xgboost": {
-            "n_estimators": [50, 100, 200],
+            "n_estimators": [100, 200, 300],
             "max_depth": [3, 5, 7],
-            "learning_rate": [0.01, 0.1, 0.2]
+            "learning_rate": [0.01, 0.05, 0.1],
+            "subsample": [0.8, 1.0],
+            "colsample_bytree": [0.8, 1.0]
         },
         "lightgbm": {
             "n_estimators": [50, 100, 200],
@@ -152,9 +154,20 @@ class ModelTrainer:
         if "random_state" in model_class().get_params():
             kwargs.setdefault("random_state", self.random_state)
 
-        # Configurações específicas
+        # Configurações específicas para cada modelo
         if name == "xgboost":
-            kwargs.setdefault("verbosity", 0)
+            # XGBoost sensible defaults for regression
+            kwargs.setdefault("objective", "reg:squarederror")  # Regression task
+            kwargs.setdefault("n_estimators", 100)
+            kwargs.setdefault("max_depth", 5)
+            kwargs.setdefault("learning_rate", 0.1)
+            kwargs.setdefault("subsample", 0.8)  # Prevent overfitting
+            kwargs.setdefault("colsample_bytree", 0.8)  # Feature sampling
+            kwargs.setdefault("gamma", 0)  # Minimum loss reduction
+            kwargs.setdefault("reg_alpha", 0)  # L1 regularization
+            kwargs.setdefault("reg_lambda", 1)  # L2 regularization
+            kwargs.setdefault("verbosity", 0)  # Silent mode
+            kwargs.setdefault("n_jobs", -1)  # Use all cores
         elif name == "lightgbm":
             kwargs.setdefault("verbose", -1)
         elif name == "catboost":

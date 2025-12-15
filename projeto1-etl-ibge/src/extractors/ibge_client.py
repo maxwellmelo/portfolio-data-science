@@ -308,7 +308,7 @@ class IBGEClient:
         anos: Optional[str] = None
     ) -> List[Dict]:
         """
-        Obtém PIB per capita (agregado 37).
+        Obtém PIB per capita (agregado 5938, variável 513).
 
         Args:
             nivel: Nível geográfico
@@ -321,8 +321,10 @@ class IBGEClient:
         localidades = f"{nivel}[{localidade}]"
         periodos = anos if anos else "all"
 
+        # PIB per capita está no agregado 5938, variável 513
         return self.get_agregado(
-            agregado_id=37,
+            agregado_id=5938,
+            variaveis="513",
             localidades=localidades,
             periodos=periodos
         )

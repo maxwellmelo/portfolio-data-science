@@ -1,12 +1,63 @@
-# 🌳 Dashboard Ambiental - Desmatamento no Brasil
+# Dashboard Ambiental - Desmatamento no Brasil
 
-Dashboard interativo para análise de dados de desmatamento no Brasil, com foco no bioma Cerrado e no estado do Piauí, utilizando dados oficiais do PRODES/INPE.
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.29-red.svg)
+![Python](https://img.shields.io/badge/Python-3.11+-3776ab.svg?style=flat&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.29+-FF4B4B.svg?style=flat&logo=streamlit&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-5.18+-3F4F75.svg?style=flat&logo=plotly&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-2.0+-150458.svg?style=flat&logo=pandas&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-## 📋 Sobre o Projeto
+**Dashboard interativo para monitoramento e análise de desmatamento no Brasil**
+
+[Demo Notebook](#notebook-demonstrativo) | [Dashboard](#como-executar) | [Resultados](#destaques-dos-dados)
+
+</div>
+
+---
+
+## Resultados em Destaque
+
+| Metrica | Valor |
+|---------|-------|
+| **Periodo Analisado** | 2000-2025 |
+| **Total de Registros** | 416+ observacoes |
+| **Biomas Cobertos** | 6 biomas brasileiros |
+| **Estados Monitorados** | 27 UFs |
+| **Reducao Cerrado 2025** | -11.49% vs 2024 |
+
+---
+
+## Notebook Demonstrativo
+
+O notebook [`notebooks/demo_desmatamento.ipynb`](notebooks/demo_desmatamento.ipynb) apresenta analises visuais dos dados de desmatamento:
+
+### Visualizacoes Incluidas
+
+| Analise | Tipo de Grafico |
+|---------|-----------------|
+| KPIs Principais | Cards interativos |
+| Evolucao por Bioma | Area empilhada |
+| Distribuicao por Bioma | Pizza |
+| Ranking de Estados | Barras horizontais |
+| Foco no Piaui | Comparativo temporal |
+| Heatmap Temporal | Bioma x Ano |
+
+### Insights Gerados
+
+```
+VISAO GERAL (2015-2025)
+   Maior bioma afetado: Amazonia
+   Maior estado desmatador: PA
+
+FOCO: PIAUI
+   Posicao no Cerrado: 3o maior desmatador
+   Biomas afetados: Cerrado e Caatinga
+```
+
+---
+
+## Sobre o Projeto
 
 Este projeto é parte do portfólio de Ciência de Dados e apresenta uma análise completa dos dados de desmatamento no Brasil, com recursos como:
 
@@ -17,7 +68,7 @@ Este projeto é parte do portfólio de Ciência de Dados e apresenta uma anális
 - **KPIs em Tempo Real**: Indicadores-chave atualizados automaticamente
 - **Foco Especial**: Análise detalhada do estado do Piauí
 
-## 🎯 Objetivos
+## Objetivos
 
 1. Democratizar o acesso a dados ambientais importantes
 2. Facilitar a compreensão de tendências de desmatamento
@@ -25,7 +76,7 @@ Este projeto é parte do portfólio de Ciência de Dados e apresenta uma anális
 4. Destacar a situação do Piauí no contexto do Cerrado
 5. Demonstrar habilidades em ciência de dados e visualização
 
-## 📊 Fontes de Dados
+## Fontes de Dados
 
 ### PRODES (Programa de Monitoramento do Desmatamento)
 - Sistema do INPE para monitoramento por satélites do desmatamento
@@ -44,7 +95,7 @@ Este projeto é parte do portfólio de Ciência de Dados e apresenta uma anális
 - [INPE - Instituto Nacional de Pesquisas Espaciais](https://www.gov.br/inpe/)
 - [Portal de Dados Abertos INPE](https://www.gov.br/inpe/pt-br/acesso-a-informacao/dados-abertos)
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 ### Backend e Processamento
 - **Python 3.8+**: Linguagem principal
@@ -64,7 +115,7 @@ Este projeto é parte do portfólio de Ciência de Dados e apresenta uma anális
 - **Fiona**: Leitura/escrita de dados vetoriais
 - **PyProj**: Transformações de coordenadas
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 projeto2-dashboard-ambiental/
@@ -101,7 +152,7 @@ projeto2-dashboard-ambiental/
     └── images/                     # Imagens e recursos
 ```
 
-## 🔧 Instalação e Configuração
+## Instalacao e Configuracao
 
 ### 1. Clone o repositório
 
@@ -135,7 +186,7 @@ cp .env.example .env
 # Edite o arquivo .env conforme necessário
 ```
 
-## ▶️ Como Executar
+## Como Executar
 
 ### Executar o Dashboard
 
@@ -158,7 +209,7 @@ streamlit run app.py --server.runOnSave false
 streamlit run app.py --logger.level debug
 ```
 
-## 📖 Funcionalidades Principais
+## Funcionalidades Principais
 
 ### 1. Visão Geral
 - **KPIs Principais**: Desmatamento atual, variação anual, média histórica
@@ -191,7 +242,7 @@ streamlit run app.py --logger.level debug
 - **Metodologia**: Explicação das análises
 - **Tecnologias**: Stack tecnológica utilizada
 
-## 📊 Dados Disponíveis
+## Dados Disponiveis
 
 ### Período de Cobertura
 - **Início**: 2000
@@ -214,7 +265,7 @@ streamlit run app.py --logger.level debug
 - Rankings por estado
 - Distribuição por bioma
 
-## 🎨 Customização
+## Customizacao
 
 ### Temas e Cores
 
@@ -240,7 +291,7 @@ DEFAULT_YEAR_START = 2018
 DEFAULT_YEAR_END = 2024
 ```
 
-## 📈 Exemplos de Análises
+## Exemplos de Analises
 
 ### 1. Análise de Tendência
 
@@ -275,7 +326,7 @@ print(f"Desmatamento atual: {kpis['desmatamento_atual_km2']} km²")
 print(f"Variação anual: {kpis['variacao_anual_percentual']}%")
 ```
 
-## 🔍 Destaques dos Dados (2025 - Preliminar)
+## Destaques dos Dados (2025 - Preliminar)
 
 ### Cerrado
 - **Taxa Total**: 7.235 km²
@@ -290,7 +341,7 @@ print(f"Variação anual: {kpis['variacao_anual_percentual']}%")
 - Importante área de transição entre Cerrado e Caatinga
 - Dados históricos desde 2000 disponíveis
 
-## 🤝 Contribuições
+## Contribuicoes
 
 Este é um projeto de portfólio pessoal, mas sugestões são bem-vindas!
 
@@ -301,24 +352,24 @@ Para contribuir:
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-## 📝 Licença
+## Licenca
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
-## 👨‍💻 Autor
+## Autor
 
 **Maxwell**
 - Portfólio de Ciência de Dados
 - Data: Dezembro 2025
 
-## 🙏 Agradecimentos
+## Agradecimentos
 
 - **INPE** - Instituto Nacional de Pesquisas Espaciais
 - **TerraBrasilis** - Plataforma de dados geográficos
 - **PRODES** - Programa de Monitoramento do Desmatamento
 - Comunidade Open Source de Python e Streamlit
 
-## 📚 Referências
+## Referencias
 
 1. [INPE - Dados do PRODES](https://www.gov.br/inpe/pt-br/assuntos/ultimas-noticias/dados-do-prodes-apontam-reducao-no-desmatamento-na-amazonia-e-no-cerrado-brasileiros-1)
 2. [TerraBrasilis - Plataforma](http://terrabrasilis.dpi.inpe.br/)
@@ -327,7 +378,7 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 5. [Plotly Python](https://plotly.com/python/)
 6. [Folium Documentation](https://python-visualization.github.io/folium/)
 
-## 📞 Contato
+## Contato
 
 Para dúvidas, sugestões ou oportunidades:
 - GitHub: [Seu perfil]
@@ -336,6 +387,6 @@ Para dúvidas, sugestões ou oportunidades:
 
 ---
 
-**⚠️ Aviso Legal**: Este dashboard utiliza dados públicos do INPE para fins educacionais e de pesquisa. Os dados de 2025 são preliminares e serão consolidados no primeiro semestre de 2026.
+**Aviso Legal**: Este dashboard utiliza dados publicos do INPE para fins educacionais e de pesquisa. Os dados de 2025 sao preliminares e serao consolidados no primeiro semestre de 2026.
 
-**🌱 Última atualização**: Dezembro 2025
+**Ultima atualizacao**: Dezembro 2025

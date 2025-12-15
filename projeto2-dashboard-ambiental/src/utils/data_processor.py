@@ -8,6 +8,10 @@ from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 
 from .config import ESTADOS_BRASIL, BIOMAS, PROCESSED_DATA_DIR
+from .logger import get_logger
+
+# Configurar logger para este módulo
+logger = get_logger(__name__)
 
 
 class DataProcessor:
@@ -268,7 +272,7 @@ class DataProcessor:
         """Exporta dados processados"""
         output_path = PROCESSED_DATA_DIR / filename
         self.df.to_csv(output_path, index=False)
-        print(f"✓ Dados exportados para: {output_path}")
+        logger.success(f"Dados exportados para: {output_path}")
         return output_path
 
 

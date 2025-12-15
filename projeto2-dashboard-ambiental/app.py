@@ -68,7 +68,11 @@ st.markdown("""
 def load_data():
     """Carrega dados com cache"""
     loader = DataLoaderPRODES()
-    return loader.load_data(use_synthetic=True)
+    df = loader.load_data(use_synthetic=True)
+    # Garantir que estado_nome existe
+    if 'estado_nome' not in df.columns:
+        df['estado_nome'] = df['estado'].map(ESTADOS_BRASIL)
+    return df
 
 
 def main():
@@ -84,8 +88,7 @@ def main():
     ''', unsafe_allow_html=True)
 
     # Sidebar - Filtros
-    st.sidebar.image("https://via.placeholder.com/300x100/1f7a1f/ffffff?text=PRODES+Dashboard", use_container_width=True)
-    st.sidebar.title("⚙️ Filtros")
+    st.sidebar.title("Filtros")
 
     # Carregar dados
     with st.spinner("Carregando dados do PRODES/INPE..."):
@@ -135,6 +138,20 @@ def main():
     st.sidebar.metric("Estados", df_filtered['estado'].nunique())
     st.sidebar.metric("Biomas", df_filtered['bioma'].nunique())
     st.sidebar.metric("Anos", df_filtered['ano'].nunique())
+
+    # Botões de exportação
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 💾 Exportar Dados")
+
+    # Exportar dados filtrados como CSV
+    csv_data = df_filtered.to_csv(index=False).encode('utf-8')
+    st.sidebar.download_button(
+        label="📥 Baixar Dados (CSV)",
+        data=csv_data,
+        file_name=f"dados_desmatamento_{ano_inicio}_{ano_fim}.csv",
+        mime="text/csv",
+        help="Baixar dados filtrados em formato CSV"
+    )
 
     # Criar processador de dados
     processor = DataProcessor(df_filtered)
@@ -224,6 +241,16 @@ def main():
             )
             st.plotly_chart(fig_timeline, use_container_width=True)
 
+            # Botão para exportar gráfico
+            html_chart = fig_timeline.to_html(include_plotlyjs='cdn')
+            st.download_button(
+                label="💾 Exportar Gráfico (HTML)",
+                data=html_chart.encode('utf-8'),
+                file_name="evolucao_temporal_desmatamento.html",
+                mime="text/html",
+                key="download_timeline"
+            )
+
         with col2:
             st.subheader("Distribuição por Bioma")
             biome_metrics = processor.calculate_biome_metrics()
@@ -236,6 +263,16 @@ def main():
                 height=400
             )
             st.plotly_chart(fig_bioma, use_container_width=True)
+
+            # Botão para exportar gráfico
+            html_bioma = fig_bioma.to_html(include_plotlyjs='cdn')
+            st.download_button(
+                label="💾 Exportar Gráfico (HTML)",
+                data=html_bioma.encode('utf-8'),
+                file_name="distribuicao_bioma.html",
+                mime="text/html",
+                key="download_bioma"
+            )
 
         # Ranking de estados
         st.markdown("---")

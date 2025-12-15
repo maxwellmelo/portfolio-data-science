@@ -139,13 +139,13 @@ def run_training(
     logger.info("Avaliando modelos...")
     results_df = trainer.evaluate_all(X_test, y_test)
 
-    print("\n📊 Resultados dos Modelos:")
+    print("\n[RESULTADOS] Modelos:")
     print(results_df.to_string(index=False))
 
     # Feature Importance
     importance = trainer.get_feature_importance(feature_names=X_train.columns.tolist())
     if importance is not None:
-        print("\n🎯 Top 10 Features Mais Importantes:")
+        print("\n[TOP 10] Features Mais Importantes:")
         print(importance.head(10).to_string(index=False))
 
     # Salvar melhor modelo
@@ -304,7 +304,7 @@ Exemplos:
 
     if args.train:
         results = run_training(df, args.models)
-        print(f"\n✅ Treinamento concluído! Melhor modelo: {results['best_model']}")
+        print(f"\n[OK] Treinamento concluido! Melhor modelo: {results['best_model']}")
 
     if args.predict:
         if not args.model_path:
@@ -314,7 +314,7 @@ Exemplos:
         df_pred = run_prediction(args.model_path, df)
         output_path = Path("outputs/predictions.csv")
         df_pred.to_csv(output_path, index=False)
-        print(f"\n✅ Predições salvas em: {output_path}")
+        print(f"\n[OK] Predicoes salvas em: {output_path}")
 
     # Se nenhuma ação especificada, executar pipeline completo
     if not any([args.eda, args.train, args.predict]):

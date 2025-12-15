@@ -1,8 +1,68 @@
-# Modelo Preditivo de Safras Agrícolas
+# Modelo Preditivo de Safras Agricolas
 
-Modelo de Machine Learning para predição de rendimento (produtividade) de safras agrícolas utilizando dados históricos da Produção Agrícola Municipal (PAM) do IBGE.
+<div align="center">
 
-## Problema de Negócio
+![Python](https://img.shields.io/badge/Python-3.11+-3776ab.svg?style=flat&logo=python&logoColor=white)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3+-F7931E.svg?style=flat&logo=scikit-learn&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-337AB7.svg?style=flat)
+![Pandas](https://img.shields.io/badge/Pandas-2.0+-150458.svg?style=flat&logo=pandas&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
+**Sistema de Machine Learning para previsao de rendimento agricola**
+
+[Demo Notebook](#notebook-demonstrativo) | [Resultados](#resultados) | [Metodologia](#metodologia)
+
+</div>
+
+---
+
+## Resultados em Destaque
+
+| Metrica | Melhor Modelo (Gradient Boosting) |
+|---------|-----------------------------------|
+| **R2 (Coef. Determinacao)** | 0.90 |
+| **RMSE** | 704.86 kg/ha |
+| **MAE** | 519.62 kg/ha |
+| **MAPE** | 11.11% |
+
+> Metricas obtidas com validacao temporal (TimeSeriesSplit) e sem data leakage.
+
+---
+
+## Notebook Demonstrativo
+
+O notebook [`notebooks/demo_modelo_safras.ipynb`](notebooks/demo_modelo_safras.ipynb) demonstra o pipeline de ML:
+
+### Conteudo
+
+| Secao | Descricao |
+|-------|-----------|
+| Analise Exploratoria | Estatisticas e visualizacoes |
+| Feature Engineering | Criacao de lags e medias moveis |
+| Treinamento | 4 modelos comparados |
+| Avaliacao | Metricas e feature importance |
+
+### Visualizacoes
+
+- Evolucao do rendimento por cultura (linha)
+- Box plot por estado
+- Matriz de correlacao (heatmap)
+- Comparacao de modelos (barras)
+- Predicao vs Real (scatter)
+- Feature Importance (barras)
+
+### Resultado do Notebook
+
+```
+MELHOR MODELO: Gradient Boosting
+   R2: 0.90 (90% da variancia explicada)
+   RMSE: ~705 kg/ha
+   MAPE: ~11%
+```
+
+---
+
+## Problema de Negocio
 
 A predição de rendimento agrícola é crucial para:
 - **Planejamento da safra**: Estimar produção esperada
@@ -76,13 +136,18 @@ projeto3-modelo-preditivo-safras/
 - `producao_ton`: Produção em toneladas
 - `valor_producao_mil_reais`: Valor da produção
 
-### Features Derivadas
-- `rendimento_kg_ha_lag1`: Rendimento do ano anterior
-- `rendimento_kg_ha_ma3`: Média móvel 3 anos
-- `rendimento_kg_ha_diff`: Variação com ano anterior
-- `taxa_aproveitamento`: Área colhida / Área plantada
-- `produtividade_ton_ha`: Produção / Área plantada
-- Features de estado, região e cultura (one-hot)
+### Features Derivadas (Sem Data Leakage)
+- `rendimento_kg_ha_lag1/2/3`: Rendimento dos anos anteriores (lags)
+- `rendimento_kg_ha_growth_rate`: Taxa de crescimento baseada em lags
+- `area_x_rend_lag`: Interacao area x rendimento historico
+- `area_plantada_ha_estado_mean/dev`: Agregacoes por estado
+- Features de estado, regiao e cultura (one-hot)
+
+**Features Removidas (Data Leakage)**:
+- ~~taxa_aproveitamento~~: Correlacionada com target
+- ~~produtividade_ton_ha~~: Derivada do target
+- ~~rendimento_kg_ha_ma3~~: Inclui valor atual
+- ~~rendimento_kg_ha_diff~~: Usa valor atual
 
 ## Como Executar
 
@@ -135,17 +200,33 @@ jupyter notebook notebooks/
 | R² | Coeficiente de Determinação |
 | MAPE | Erro Percentual Absoluto Médio |
 
-## Resultados Típicos
+## Resultados
 
-| Modelo | RMSE | MAE | R² | MAPE |
+| Modelo | RMSE | MAE | R2 | MAPE |
 |--------|------|-----|-----|------|
-| Linear Regression | ~3500 | ~2800 | 0.65 | 25% |
-| Ridge | ~3400 | ~2700 | 0.67 | 24% |
-| Random Forest | ~2500 | ~1900 | 0.82 | 18% |
-| Gradient Boosting | ~2400 | ~1850 | 0.84 | 17% |
-| XGBoost | ~2350 | ~1800 | 0.85 | 16% |
+| **Gradient Boosting** | **704.86** | **519.62** | **0.9004** | **11.11%** |
+| Ridge | 759.05 | 580.81 | 0.8845 | 15.55% |
+| Linear Regression | 759.20 | 581.15 | 0.8845 | 15.57% |
+| Random Forest | 813.04 | 603.64 | 0.8675 | 12.86% |
 
-*Valores aproximados com dados sintéticos*
+*Metricas obtidas com TimeSeriesSplit (treino: 2000-2019, teste: 2019-2023)*
+
+## Metodologia
+
+### Prevencao de Data Leakage
+
+Este projeto implementa boas praticas para evitar vazamento de dados:
+
+1. **TimeSeriesSplit**: Dados de treino sempre anteriores aos de teste
+2. **Lag Features**: Apenas valores passados sao usados como features
+3. **VIF Analysis**: Deteccao automatica de multicolinearidade
+4. **Feature Audit**: Features derivadas do target foram removidas
+
+### Validacao
+
+- Treino: Anos 2000-2019 (80% dos dados)
+- Teste: Anos 2019-2023 (20% dos dados)
+- Sem sobreposicao temporal entre treino e teste
 
 ## Fonte de Dados
 
@@ -207,8 +288,8 @@ MIT License - veja [LICENSE](LICENSE)
 
 ## Autor
 
-**Maxwell** - Projeto de Portfólio em Data Science
+**Maxwell** - Especialista em Dados
 
 ---
 
-*Desenvolvido como demonstração de competências em Machine Learning e Data Science*
+*Desenvolvido como demonstracao de competencias em Machine Learning e Data Science*

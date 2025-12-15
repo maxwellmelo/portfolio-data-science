@@ -9,6 +9,7 @@ from typing import Dict, List, Optional, Tuple
 import json
 from pathlib import Path
 import warnings
+import time
 warnings.filterwarnings('ignore')
 
 from .config import (
@@ -17,8 +18,14 @@ from .config import (
     PROCESSED_DATA_DIR,
     ESTADOS_CERRADO,
     ESTADOS_AMAZONIA,
-    DADOS_2025_PRELIM
+    ESTADOS_BRASIL,
+    DADOS_2025_PRELIM,
+    API_CONFIG
 )
+from .logger import get_logger
+
+# Configurar logger para este módulo
+logger = get_logger(__name__)
 
 
 class DataLoaderPRODES:
@@ -33,7 +40,7 @@ class DataLoaderPRODES:
                        layer: str,
                        params: Optional[Dict] = None) -> Optional[gpd.GeoDataFrame]:
         """
-        Busca dados via WFS do TerraBrasilis
+        Busca dados via WFS do TerraBrasilis com retry automático
 
         Args:
             service: Tipo de serviço (prodes_cerrado, prodes_amazonia)
@@ -44,6 +51,7 @@ class DataLoaderPRODES:
             GeoDataFrame com os dados ou None em caso de erro
         """
         if service not in WFS_SERVICES:
+            logger.error(f"Serviço {service} não encontrado")
             raise ValueError(f"Serviço {service} não encontrado")
 
         service_config = WFS_SERVICES[service]
@@ -62,29 +70,72 @@ class DataLoaderPRODES:
         if params:
             default_params.update(params)
 
-        try:
-            print(f"Buscando dados de {layer}...")
-            response = requests.get(url, params=default_params, timeout=60)
-            response.raise_for_status()
+        # Implementar retry com exponential backoff
+        max_retries = API_CONFIG['max_retries']
+        timeout = API_CONFIG['timeout_seconds']
+        backoff_factor = API_CONFIG['retry_backoff_factor']
 
-            # Converter resposta JSON para GeoDataFrame
-            geojson_data = response.json()
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"Buscando dados de {layer} (tentativa {attempt + 1}/{max_retries})...")
 
-            if 'features' in geojson_data and len(geojson_data['features']) > 0:
-                gdf = gpd.GeoDataFrame.from_features(geojson_data['features'])
-                gdf.crs = "EPSG:4674"
-                print(f"✓ {len(gdf)} registros carregados")
-                return gdf
-            else:
-                print(f"Nenhum dado retornado para {layer}")
+                response = requests.get(
+                    url,
+                    params=default_params,
+                    timeout=timeout
+                )
+                response.raise_for_status()
+
+                # Converter resposta JSON para GeoDataFrame
+                geojson_data = response.json()
+
+                if 'features' in geojson_data and len(geojson_data['features']) > 0:
+                    gdf = gpd.GeoDataFrame.from_features(geojson_data['features'])
+                    gdf.crs = "EPSG:4674"
+                    logger.success(f"{len(gdf)} registros carregados com sucesso de {layer}")
+                    return gdf
+                else:
+                    logger.warning(f"Nenhum dado retornado para {layer}")
+                    return None
+
+            except requests.exceptions.Timeout as e:
+                logger.warning(f"Timeout na tentativa {attempt + 1} para {layer}: {e}")
+                if attempt < max_retries - 1:
+                    wait_time = backoff_factor ** attempt
+                    logger.info(f"Aguardando {wait_time}s antes de tentar novamente...")
+                    time.sleep(wait_time)
+                else:
+                    logger.error(f"Falha após {max_retries} tentativas (timeout)")
+                    return None
+
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                logger.warning(f"HTTP Error {status_code} na tentativa {attempt + 1} para {layer}")
+
+                # Retry apenas para códigos específicos
+                if status_code in API_CONFIG['retry_status_codes'] and attempt < max_retries - 1:
+                    wait_time = backoff_factor ** attempt
+                    logger.info(f"Aguardando {wait_time}s antes de tentar novamente...")
+                    time.sleep(wait_time)
+                else:
+                    logger.error(f"Erro HTTP {status_code} ao buscar dados WFS: {e}")
+                    return None
+
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Erro de requisição na tentativa {attempt + 1}: {e}")
+                if attempt < max_retries - 1:
+                    wait_time = backoff_factor ** attempt
+                    logger.info(f"Aguardando {wait_time}s antes de tentar novamente...")
+                    time.sleep(wait_time)
+                else:
+                    logger.error(f"Falha após {max_retries} tentativas: {e}")
+                    return None
+
+            except Exception as e:
+                logger.error(f"Erro inesperado ao processar dados de {layer}: {e}", exc_info=True)
                 return None
 
-        except requests.exceptions.RequestException as e:
-            print(f"Erro ao buscar dados WFS: {e}")
-            return None
-        except Exception as e:
-            print(f"Erro ao processar dados: {e}")
-            return None
+        return None
 
     def create_synthetic_data(self) -> pd.DataFrame:
         """
@@ -183,14 +234,19 @@ class DataLoaderPRODES:
         cache_file = self.processed_dir / "desmatamento_completo.csv"
 
         if cache_file.exists():
-            print("Carregando dados do cache...")
-            return pd.read_csv(cache_file)
+            logger.info(f"Carregando dados do cache: {cache_file}")
+            df = pd.read_csv(cache_file)
+            # Adicionar estado_nome se não existir
+            if 'estado_nome' not in df.columns:
+                df['estado_nome'] = df['estado'].map(ESTADOS_BRASIL)
+            logger.success(f"{len(df)} registros carregados do cache")
+            return df
 
         if use_synthetic:
-            print("Gerando dados sintéticos baseados em estatísticas reais do PRODES...")
+            logger.info("Gerando dados sintéticos baseados em estatísticas reais do PRODES...")
             df = self.create_synthetic_data()
         else:
-            print("Tentando buscar dados da API TerraBrasilis...")
+            logger.info("Tentando buscar dados da API TerraBrasilis...")
             # Tentar buscar dados reais da API
             try:
                 gdf_cerrado = self.fetch_wfs_data('prodes_cerrado',
@@ -198,16 +254,20 @@ class DataLoaderPRODES:
                 if gdf_cerrado is not None:
                     df = self._process_geodataframe(gdf_cerrado)
                 else:
-                    print("Falha ao buscar dados da API. Usando dados sintéticos...")
+                    logger.warning("Falha ao buscar dados da API. Usando dados sintéticos...")
                     df = self.create_synthetic_data()
             except Exception as e:
-                print(f"Erro ao acessar API: {e}")
-                print("Usando dados sintéticos...")
+                logger.error(f"Erro ao acessar API: {e}", exc_info=True)
+                logger.info("Usando dados sintéticos...")
                 df = self.create_synthetic_data()
+
+        # Adicionar estado_nome se não existir
+        if 'estado_nome' not in df.columns:
+            df['estado_nome'] = df['estado'].map(ESTADOS_BRASIL)
 
         # Salvar cache
         df.to_csv(cache_file, index=False)
-        print(f"[OK] Dados salvos em cache: {cache_file}")
+        logger.success(f"Dados salvos em cache: {cache_file}")
 
         return df
 

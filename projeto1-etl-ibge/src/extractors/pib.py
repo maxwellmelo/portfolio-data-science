@@ -3,12 +3,14 @@ Extrator de dados de PIB do IBGE.
 Utiliza agregados do SIDRA para PIB municipal e per capita.
 """
 
-from typing import Dict, List, Optional
+from typing import Optional
 from datetime import datetime
 import pandas as pd
 
 from .ibge_client import IBGEClient
 from src.utils.logger import get_logger
+from src.utils.sidra_parser import parse_sidra_response
+from config.constants import AGREGADO_PIB, VARIAVEL_PIB_PERCAPITA
 
 logger = get_logger(__name__)
 
@@ -19,11 +21,12 @@ class PIBExtractor:
 
     Agregados utilizados:
     - 5938: PIB Municipal (Produto Interno Bruto dos Municípios)
-    - 37: PIB per capita
+           - Variavel 37: PIB a precos correntes
+           - Variavel 513: PIB per capita
     """
 
-    AGREGADO_PIB = 5938
-    AGREGADO_PIB_PERCAPITA = 37
+    AGREGADO_PIB = AGREGADO_PIB
+    VARIAVEL_PIB_PERCAPITA = VARIAVEL_PIB_PERCAPITA
 
     def __init__(self, client: Optional[IBGEClient] = None):
         """
@@ -41,67 +44,6 @@ class PIBExtractor:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self._owns_client:
             self._client.close()
-
-    def _parse_sidra_response(self, data: List[Dict]) -> pd.DataFrame:
-        """
-        Converte resposta da API SIDRA para DataFrame.
-
-        Args:
-            data: Resposta bruta da API
-
-        Returns:
-            DataFrame estruturado
-        """
-        if not data:
-            return pd.DataFrame()
-
-        records = []
-
-        for variavel in data:
-            variavel_id = variavel.get("id")
-            variavel_nome = variavel.get("variavel")
-            unidade = variavel.get("unidade")
-
-            resultados = variavel.get("resultados", [])
-
-            for resultado in resultados:
-                # Extrair classificações (setores da economia, etc.)
-                classificacoes = resultado.get("classificacoes", [])
-                classificacao_info = {}
-                for classif in classificacoes:
-                    classif_nome = classif.get("nome", "")
-                    categorias = classif.get("categoria", {})
-                    for cat_id, cat_nome in categorias.items():
-                        classificacao_info[f"classif_{classif_nome}"] = cat_nome
-
-                series = resultado.get("series", [])
-
-                for serie in series:
-                    localidade = serie.get("localidade", {})
-                    localidade_id = localidade.get("id")
-                    localidade_nome = localidade.get("nome")
-                    localidade_nivel = localidade.get("nivel", {}).get("nome")
-
-                    valores = serie.get("serie", {})
-
-                    for ano, valor in valores.items():
-                        # Ignorar valores nulos ou marcados como "-"
-                        if valor and valor != "-" and valor != "...":
-                            record = {
-                                "variavel_id": variavel_id,
-                                "variavel_nome": variavel_nome,
-                                "unidade": unidade,
-                                "localidade_id": localidade_id,
-                                "localidade_nome": localidade_nome,
-                                "localidade_nivel": localidade_nivel,
-                                "ano": int(ano),
-                                "valor": float(valor.replace(".", "").replace(",", ".")) if isinstance(valor, str) else float(valor)
-                            }
-                            # Adicionar classificações
-                            record.update(classificacao_info)
-                            records.append(record)
-
-        return pd.DataFrame(records)
 
     def extract_pib_por_estado(
         self,
@@ -124,7 +66,7 @@ class PIBExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         elapsed = (datetime.now() - start_time).total_seconds()
         logger.info(
@@ -161,7 +103,7 @@ class PIBExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         # Filtrar por UF se especificado
         if uf_sigla and not df.empty:
@@ -197,7 +139,7 @@ class PIBExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         elapsed = (datetime.now() - start_time).total_seconds()
         logger.info(
@@ -234,7 +176,7 @@ class PIBExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         # Filtrar por UF se especificado
         if uf_sigla and not df.empty:

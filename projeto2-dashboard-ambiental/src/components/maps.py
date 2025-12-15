@@ -8,6 +8,12 @@ import pandas as pd
 import geopandas as gpd
 from typing import Optional, Dict, List
 import json
+import sys
+from pathlib import Path
+
+# Adicionar src ao path para importar config
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from utils.config import MAP_CONFIG
 
 
 class MapBuilder:
@@ -27,7 +33,7 @@ class MapBuilder:
     }
 
     def __init__(self):
-        self.default_zoom = 4
+        self.default_zoom = MAP_CONFIG["zoom_brazil"]
         self.center_brasil = self.COORDINATES["Brasil"]
 
     def create_choropleth_map(self,
@@ -82,26 +88,29 @@ class MapBuilder:
             if estado in self.COORDINATES:
                 coords = self.COORDINATES[estado]
 
-                # Determinar cor baseado no valor
+                # Determinar cor baseado no valor (usando constantes de config)
                 if valor > df[value_col].quantile(0.75):
-                    color = 'red'
+                    color = MAP_CONFIG["color_high"]
                 elif valor > df[value_col].quantile(0.5):
-                    color = 'orange'
+                    color = MAP_CONFIG["color_medium_high"]
                 elif valor > df[value_col].quantile(0.25):
-                    color = 'yellow'
+                    color = MAP_CONFIG["color_medium_low"]
                 else:
-                    color = 'green'
+                    color = MAP_CONFIG["color_low"]
 
-                # Adicionar marcador circular
+                # Adicionar marcador circular (usando constantes de config)
+                radius = (MAP_CONFIG["marker_radius_base"] +
+                         (valor / df[value_col].max()) * MAP_CONFIG["marker_radius_multiplier"])
+
                 folium.CircleMarker(
                     location=coords,
-                    radius=10 + (valor / df[value_col].max()) * 30,
+                    radius=radius,
                     popup=f"<b>{estado_nome}</b><br>{value_col}: {valor:.2f} km²",
                     tooltip=estado_nome,
                     color=color,
                     fill=True,
                     fillColor=color,
-                    fillOpacity=0.6
+                    fillOpacity=MAP_CONFIG["circle_fill_opacity"]
                 ).add_to(m)
 
         # Adicionar legenda
@@ -156,9 +165,13 @@ class MapBuilder:
                     intensity = estado_data['area_desmatada_km2'].sum()
                     heat_data.append([coords[0], coords[1], intensity])
 
-        # Adicionar camada de calor
+        # Adicionar camada de calor (usando constantes de config)
         if heat_data:
-            plugins.HeatMap(heat_data, radius=50, blur=40).add_to(m)
+            plugins.HeatMap(
+                heat_data,
+                radius=MAP_CONFIG["heatmap_radius"],
+                blur=MAP_CONFIG["heatmap_blur"]
+            ).add_to(m)
 
         # Adicionar título
         title_html = f'''
@@ -250,7 +263,7 @@ class MapBuilder:
             Mapa Folium
         """
         center = self.COORDINATES["PI"]
-        zoom = 6
+        zoom = MAP_CONFIG["zoom_state"]
 
         m = folium.Map(
             location=center,
@@ -330,18 +343,19 @@ class MapBuilder:
             if estado in self.COORDINATES:
                 coords = self.COORDINATES[estado]
 
-                # Tamanho do círculo proporcional ao desmatamento
-                radius = 10 + (valor / df_grouped['area_desmatada_km2'].max()) * 40
+                # Tamanho do círculo proporcional ao desmatamento (usando constantes)
+                radius = (MAP_CONFIG["marker_radius_base"] +
+                         (valor / df_grouped['area_desmatada_km2'].max()) * MAP_CONFIG["marker_size_max"])
 
                 folium.CircleMarker(
                     location=coords,
                     radius=radius,
                     popup=f"<b>{estado_nome}</b><br>Desmatamento: {valor:.2f} km²",
                     tooltip=estado_nome,
-                    color='darkred',
+                    color=MAP_CONFIG["color_darkred"],
                     fill=True,
-                    fillColor='red',
-                    fillOpacity=0.6
+                    fillColor=MAP_CONFIG["color_high"],
+                    fillOpacity=MAP_CONFIG["circle_fill_opacity"]
                 ).add_to(m)
 
         # Adicionar título

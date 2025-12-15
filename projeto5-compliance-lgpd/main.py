@@ -12,29 +12,193 @@ Uso:
 
 import argparse
 import sys
+import json
 from pathlib import Path
 from datetime import datetime
+from typing import Dict, Any, Optional, List
 
 import pandas as pd
 from loguru import logger
+from pydantic import BaseModel, field_validator, ValidationError
 
 # Adicionar diretório raiz ao path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from config.settings import settings
+from config.settings import settings, PROJECT_ROOT
 from src.scanners import PIIScanner, ScanResult
-from src.anonymizers import DataAnonymizer
+from src.anonymizers import DataAnonymizer, AnonymizationMethod
 from src.reporters import LGPDReporter
 
 
-def setup_logging(level: str = "INFO") -> None:
-    """Configura logging."""
+# ========== Modelos de Validação de Configuração ==========
+
+class ColumnConfig(BaseModel):
+    """Configuração de anonimização para uma coluna."""
+    method: str
+    truncate: Optional[int] = None
+    algorithm: Optional[str] = None
+    visible_start: Optional[int] = None
+    visible_end: Optional[int] = None
+    mask_char: Optional[str] = None
+    pattern: Optional[str] = None
+    pii_type: Optional[str] = None
+    noise_level: Optional[float] = None
+    bins: Optional[int] = None
+    labels: Optional[List[str]] = None
+    prefix: Optional[str] = None
+    replacement: Optional[Any] = None
+
+    @field_validator('method')
+    @classmethod
+    def validate_method(cls, v: str) -> str:
+        """Valida se o método de anonimização é suportado."""
+        valid_methods = [m.value for m in AnonymizationMethod]
+        if v not in valid_methods:
+            raise ValueError(
+                f"Metodo '{v}' nao suportado. "
+                f"Metodos validos: {', '.join(valid_methods)}"
+            )
+        return v
+
+    @field_validator('truncate')
+    @classmethod
+    def validate_truncate(cls, v: Optional[int]) -> Optional[int]:
+        """Valida valor de truncate."""
+        if v is not None and v < 1:
+            raise ValueError("truncate deve ser >= 1")
+        return v
+
+    @field_validator('noise_level')
+    @classmethod
+    def validate_noise_level(cls, v: Optional[float]) -> Optional[float]:
+        """Valida nível de ruído."""
+        if v is not None and (v < 0 or v > 1):
+            raise ValueError("noise_level deve estar entre 0 e 1")
+        return v
+
+
+def validate_config(config: Dict[str, Any]) -> Dict[str, Dict]:
+    """
+    Valida configuração de anonimização completa.
+
+    Args:
+        config: Dicionário de configuração {coluna: {method: ..., ...}}
+
+    Returns:
+        Configuração validada
+
+    Raises:
+        ValidationError: Se a configuração for inválida
+    """
+    validated_config = {}
+    errors = []
+
+    for column, col_config in config.items():
+        try:
+            validated = ColumnConfig(**col_config)
+            validated_config[column] = col_config
+        except ValidationError as e:
+            errors.append(f"Coluna '{column}': {e}")
+
+    if errors:
+        error_msg = "Erros de validacao na configuracao:\n" + "\n".join(errors)
+        raise ValueError(error_msg)
+
+    return validated_config
+
+
+def load_config_file(config_path: str) -> Dict[str, Dict]:
+    """
+    Carrega e valida arquivo de configuração JSON.
+
+    Args:
+        config_path: Caminho do arquivo JSON
+
+    Returns:
+        Configuração validada
+
+    Raises:
+        FileNotFoundError: Se arquivo não existir
+        json.JSONDecodeError: Se JSON for inválido
+        ValueError: Se configuração for inválida
+    """
+    path = Path(config_path)
+
+    if not path.exists():
+        raise FileNotFoundError(f"Arquivo de configuracao nao encontrado: {config_path}")
+
+    logger.info(f"Carregando configuracao: {config_path}")
+
+    try:
+        with open(path, encoding='utf-8') as f:
+            config = json.load(f)
+    except json.JSONDecodeError as e:
+        raise json.JSONDecodeError(
+            f"JSON invalido em {config_path}: {e.msg}",
+            e.doc,
+            e.pos
+        )
+
+    if not isinstance(config, dict):
+        raise ValueError("Configuracao deve ser um dicionario {coluna: {method: ...}}")
+
+    if not config:
+        raise ValueError("Configuracao vazia")
+
+    # Validar configuração
+    validated_config = validate_config(config)
+
+    logger.info(f"Configuracao validada: {len(validated_config)} colunas")
+
+    return validated_config
+
+
+# ========== Logging Estruturado ==========
+
+def setup_logging(level: str = "INFO", log_to_file: bool = True) -> None:
+    """
+    Configura logging estruturado com saída para console e arquivo.
+
+    Args:
+        level: Nível de log (DEBUG, INFO, WARNING, ERROR)
+        log_to_file: Se deve salvar logs em arquivo
+    """
     logger.remove()
+
+    # Console output
     logger.add(
         sys.stderr,
         format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
         level=level
     )
+
+    # File output com rotação
+    if log_to_file:
+        log_dir = PROJECT_ROOT / "data" / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        log_file = log_dir / "lgpd_audit_{time:YYYY-MM-DD}.log"
+
+        logger.add(
+            str(log_file),
+            format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
+            level="DEBUG",
+            rotation="10 MB",
+            retention="30 days",
+            compression="zip",
+            encoding="utf-8"
+        )
+
+        # Log de auditoria separado
+        audit_file = log_dir / "audit_trail_{time:YYYY-MM-DD}.log"
+        logger.add(
+            str(audit_file),
+            format="{time:YYYY-MM-DD HH:mm:ss} | AUDIT | {message}",
+            level="INFO",
+            rotation="10 MB",
+            retention="90 days",
+            filter=lambda record: "AUDIT" in record["message"]
+        )
 
 
 def scan_file(filepath: str, generate_report: bool = False) -> ScanResult:
@@ -118,25 +282,48 @@ def anonymize_file(
 
     Returns:
         Caminho do arquivo anonimizado
-    """
-    import json
 
+    Raises:
+        FileNotFoundError: Se arquivo não existir
+        ValueError: Se formato não suportado ou config inválida
+        json.JSONDecodeError: Se JSON da config for inválido
+    """
     path = Path(filepath)
 
-    # Carregar dados
-    if path.suffix == ".csv":
-        df = pd.read_csv(filepath)
-    elif path.suffix in [".xlsx", ".xls"]:
-        df = pd.read_excel(filepath)
-    else:
-        raise ValueError(f"Formato não suportado: {path.suffix}")
+    if not path.exists():
+        logger.error(f"Arquivo nao encontrado: {filepath}")
+        raise FileNotFoundError(f"Arquivo nao encontrado: {filepath}")
 
-    # Carregar configuração
+    # Log de auditoria - início
+    logger.info(f"AUDIT: Iniciando anonimizacao do arquivo {path.name}")
+
+    # Carregar dados
+    logger.info(f"Carregando arquivo: {filepath}")
+
+    try:
+        if path.suffix == ".csv":
+            df = pd.read_csv(filepath)
+        elif path.suffix in [".xlsx", ".xls"]:
+            df = pd.read_excel(filepath)
+        else:
+            raise ValueError(f"Formato nao suportado: {path.suffix}")
+    except Exception as e:
+        logger.error(f"Erro ao carregar arquivo: {e}")
+        raise
+
+    logger.info(f"Arquivo carregado: {len(df)} linhas, {len(df.columns)} colunas")
+
+    # Carregar e validar configuração
     if config_path:
-        with open(config_path) as f:
-            config = json.load(f)
+        try:
+            config = load_config_file(config_path)
+            logger.info(f"AUDIT: Usando configuracao do arquivo {config_path}")
+        except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+            logger.error(f"Erro na configuracao: {e}")
+            raise
     else:
         # Configuração padrão baseada em scan
+        logger.info("Gerando configuracao automatica baseada em scan...")
         scanner = PIIScanner()
         result = scanner.scan(df, source_name=path.name)
 
@@ -149,6 +336,12 @@ def anonymize_file(
             else:
                 config[pii.column] = {"method": "generalize"}
 
+        logger.info(f"AUDIT: Configuracao automatica gerada para {len(config)} colunas")
+
+    # Log das colunas que serão processadas
+    for col, params in config.items():
+        logger.info(f"AUDIT: Coluna '{col}' sera anonimizada com metodo '{params.get('method')}'")
+
     # Anonimizar
     anonymizer = DataAnonymizer()
     df_anon = anonymizer.anonymize_dataframe(df, config)
@@ -157,12 +350,18 @@ def anonymize_file(
     if output_path is None:
         output_path = path.parent / f"{path.stem}_anonimizado{path.suffix}"
 
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     if str(output_path).endswith(".csv"):
         df_anon.to_csv(output_path, index=False)
     else:
         df_anon.to_excel(output_path, index=False)
 
-    logger.info(f"Arquivo anonimizado salvo: {output_path}")
+    # Log de auditoria - conclusão
+    logger.info(f"AUDIT: Anonimizacao concluida. Arquivo salvo: {output_path}")
+    logger.info(f"AUDIT: {len(config)} colunas processadas, {len(df)} registros anonimizados")
+
     print(f"\nArquivo anonimizado: {output_path}")
     print(f"Colunas processadas: {len(config)}")
 

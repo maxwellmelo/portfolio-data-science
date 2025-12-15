@@ -50,19 +50,43 @@ class DataAnonymizer:
     - Ruído: Adiciona variação aleatória (para numéricos)
     """
 
-    def __init__(self, salt: str = None):
+    def __init__(self, salt: str = None, strict_mode: bool = False):
         """
         Inicializa o anonimizador.
 
         Args:
             salt: Salt para funções hash (IMPORTANTE: use valor seguro em produção)
+            strict_mode: Se True, raise error quando salt inseguro for detectado
         """
         self.salt = salt or settings.anonymization.hash_salt
         self.fake = Faker('pt_BR')
         self._token_map: Dict[str, str] = {}
         self._token_counter = 0
+        self._strict_mode = strict_mode
+
+        # Validar segurança do salt
+        self._validate_salt()
 
         logger.info("DataAnonymizer inicializado")
+
+    def _validate_salt(self) -> None:
+        """Valida segurança do salt e emite avisos/erros apropriados."""
+        warning = settings.anonymization.get_salt_warning()
+
+        if warning:
+            if self._strict_mode:
+                raise ValueError(
+                    f"Configuracao de salt insegura em modo strict: {warning}. "
+                    "Defina HASH_SALT no .env ou desative strict_mode."
+                )
+            else:
+                logger.warning(f"SEGURANCA: {warning}")
+
+        if not settings.anonymization.is_salt_secure():
+            logger.warning(
+                "Salt atual NAO e seguro para producao. "
+                "Recomendacao: gere um salt aleatorio de pelo menos 32 caracteres."
+            )
 
     def anonymize_column(
         self,

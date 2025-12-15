@@ -483,18 +483,18 @@ class ModelEvaluator:
 """
         # Diagnóstico baseado nas métricas
         if metrics['r2'] >= 0.9:
-            report += "- ✅ Excelente poder explicativo (R² >= 0.9)\n"
+            report += "- [OK] Excelente poder explicativo (R2 >= 0.9)\n"
         elif metrics['r2'] >= 0.7:
-            report += "- ✓ Bom poder explicativo (R² >= 0.7)\n"
+            report += "- [OK] Bom poder explicativo (R2 >= 0.7)\n"
         else:
-            report += "- ⚠️ Poder explicativo moderado/baixo (R² < 0.7)\n"
+            report += "- [ATENCAO] Poder explicativo moderado/baixo (R2 < 0.7)\n"
 
         if metrics['mape'] <= 10:
-            report += "- ✅ Erro percentual baixo (MAPE <= 10%)\n"
+            report += "- [OK] Erro percentual baixo (MAPE <= 10%)\n"
         elif metrics['mape'] <= 20:
-            report += "- ✓ Erro percentual aceitável (MAPE <= 20%)\n"
+            report += "- [OK] Erro percentual aceitavel (MAPE <= 20%)\n"
         else:
-            report += "- ⚠️ Erro percentual elevado (MAPE > 20%)\n"
+            report += "- [ATENCAO] Erro percentual elevado (MAPE > 20%)\n"
 
         # Feature importance
         if feature_importance is not None:

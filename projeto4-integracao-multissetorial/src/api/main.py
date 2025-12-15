@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from config.settings import settings, FONTES_DADOS, MUNICIPIOS_PIAUI
 from src.extractors import SyntheticDataGenerator
+from src.api.data_loader import DataLoader, get_data_loader
 
 
 # ========== Modelos Pydantic ==========
@@ -127,6 +128,7 @@ app = create_app()
 
 # Cache de dados (em produção, usar Redis)
 _data_cache = {}
+_data_loader: DataLoader = None
 
 
 def get_data_generator():
@@ -134,13 +136,18 @@ def get_data_generator():
     return SyntheticDataGenerator()
 
 
+def get_loader() -> DataLoader:
+    """Retorna instância do DataLoader."""
+    global _data_loader
+    if _data_loader is None:
+        _data_loader = get_data_loader()
+    return _data_loader
+
+
 def load_cached_data(generator: SyntheticDataGenerator) -> dict:
-    """Carrega dados em cache."""
-    global _data_cache
-    if not _data_cache:
-        logger.info("Carregando dados em cache...")
-        _data_cache = generator.generate_all()
-    return _data_cache
+    """Carrega dados em cache, priorizando dados reais."""
+    loader = get_loader()
+    return loader.load_all(generator)
 
 
 # ========== Endpoints ==========
@@ -173,6 +180,27 @@ async def listar_fontes():
         FonteDados(**fonte)
         for fonte in FONTES_DADOS.values()
     ]
+
+
+@app.get("/fontes/status", tags=["Metadados"])
+async def status_fontes(generator: SyntheticDataGenerator = Depends(get_data_generator)):
+    """
+    Mostra status das fontes de dados carregadas.
+
+    Indica quais datasets contêm dados reais (IBGE) vs sintéticos.
+    """
+    # Garantir que os dados estão carregados
+    load_cached_data(generator)
+    loader = get_loader()
+
+    return {
+        "resumo": {
+            "total_datasets": len(loader._sources),
+            "datasets_reais": sum(1 for s in loader._sources.values() if s.is_real),
+            "datasets_sinteticos": sum(1 for s in loader._sources.values() if not s.is_real)
+        },
+        "datasets": loader.get_data_sources()
+    }
 
 
 @app.get("/municipios", response_model=List[MunicipioInfo], tags=["Metadados"])
@@ -317,8 +345,17 @@ async def consultar_pib(
     ano: Optional[int] = Query(None),
     generator: SyntheticDataGenerator = Depends(get_data_generator)
 ):
-    """Consulta dados de PIB municipal."""
+    """
+    Consulta dados de PIB municipal.
+
+    **DADOS REAIS DO IBGE** (quando disponíveis):
+    - Fonte: IBGE - Sistema de Contas Regionais
+    - Anos: 2020, 2021
+    - 224 municípios do Piauí
+    """
     data = load_cached_data(generator)
+    loader = get_loader()
+
     df = data["economia_pib"].copy()
 
     if municipio_id:
@@ -326,7 +363,15 @@ async def consultar_pib(
     if ano:
         df = df[df["ano"] == ano]
 
-    return df.to_dict("records")
+    # Verificar se são dados reais
+    is_real = loader.is_real_data("economia_pib")
+
+    return {
+        "dados_reais": is_real,
+        "fonte": "IBGE - Sistema de Contas Regionais" if is_real else "Dados Sintéticos",
+        "total_registros": len(df),
+        "data": df.to_dict("records")
+    }
 
 
 @app.get("/assistencia/cadunico", tags=["Assistência Social"])
@@ -365,18 +410,21 @@ async def consultar_cadunico(
 @app.get("/indicadores/{municipio_id}", tags=["Indicadores"])
 async def indicadores_municipio(
     municipio_id: int,
-    ano: int = Query(2023, description="Ano de referência"),
+    ano: int = Query(2021, description="Ano de referência (2021 para dados reais de PIB)"),
     generator: SyntheticDataGenerator = Depends(get_data_generator)
 ):
     """
     Retorna indicadores consolidados de um município.
 
     Agrega dados de todas as fontes para visão integrada.
+
+    **Nota**: Para dados econômicos reais do IBGE, use ano=2020 ou ano=2021.
     """
     if municipio_id not in MUNICIPIOS_PIAUI:
         raise HTTPException(status_code=404, detail="Município não encontrado")
 
     data = load_cached_data(generator)
+    loader = get_loader()
 
     # Saúde
     mort = data["saude_mortalidade"]
@@ -392,13 +440,23 @@ async def indicadores_municipio(
     ideb = data["educacao_ideb"]
     ideb_mun = ideb[(ideb["municipio_id"] == municipio_id) & (ideb["ano"] <= ano)]
 
-    # Economia
+    # Economia (pode ser dado real)
     pib = data["economia_pib"]
     pib_mun = pib[(pib["municipio_id"] == municipio_id) & (pib["ano"] == ano)]
+
+    # Se não encontrou no ano solicitado, tentar ano mais próximo disponível
+    if len(pib_mun) == 0:
+        pib_mun_all = pib[pib["municipio_id"] == municipio_id]
+        if len(pib_mun_all) > 0:
+            ano_mais_proximo = pib_mun_all["ano"].max()
+            pib_mun = pib_mun_all[pib_mun_all["ano"] == ano_mais_proximo]
 
     # Assistência
     cad = data["assistencia_cadunico"]
     cad_mun = cad[(cad["municipio_id"] == municipio_id) & (cad["ano"] == ano)]
+
+    # Verificar fontes
+    economia_real = loader.is_real_data("economia_pib")
 
     return {
         "municipio": {
@@ -406,26 +464,37 @@ async def indicadores_municipio(
             "nome": MUNICIPIOS_PIAUI[municipio_id],
             "uf": "PI"
         },
-        "ano": ano,
+        "ano_referencia": ano,
+        "fontes": {
+            "economia": "IBGE - Dados Reais" if economia_real else "Dados Sintéticos",
+            "saude": "Dados Sintéticos",
+            "educacao": "Dados Sintéticos",
+            "assistencia": "Dados Sintéticos"
+        },
         "saude": {
             "total_obitos": len(mort_mun),
             "total_nascimentos": len(nasc_mun),
-            "principais_causas": mort_mun["causa_basica"].value_counts().head(5).to_dict() if len(mort_mun) > 0 else {}
+            "principais_causas": mort_mun["causa_basica"].value_counts().head(5).to_dict() if len(mort_mun) > 0 else {},
+            "dados_reais": False
         },
         "educacao": {
             "total_escolas": len(escolas_mun),
             "total_alunos": int(escolas_mun["total_alunos"].sum()) if len(escolas_mun) > 0 else 0,
-            "ideb_mais_recente": ideb_mun[ideb_mun["ano"] == ideb_mun["ano"].max()]["ideb"].mean() if len(ideb_mun) > 0 else None
+            "ideb_mais_recente": float(ideb_mun[ideb_mun["ano"] == ideb_mun["ano"].max()]["ideb"].mean()) if len(ideb_mun) > 0 else None,
+            "dados_reais": False
         },
         "economia": {
+            "ano_dados": int(pib_mun["ano"].iloc[0]) if len(pib_mun) > 0 else None,
             "pib_total_mil_reais": float(pib_mun["pib_total_mil_reais"].sum()) if len(pib_mun) > 0 else 0,
-            "pib_per_capita": float(pib_mun["pib_per_capita"].mean()) if len(pib_mun) > 0 else 0,
-            "populacao": int(pib_mun["populacao_estimada"].sum()) if len(pib_mun) > 0 else 0
+            "pib_per_capita": float(pib_mun["pib_per_capita"].mean()) if len(pib_mun) > 0 and "pib_per_capita" in pib_mun.columns else 0,
+            "populacao_estimada": int(pib_mun["populacao_estimada"].sum()) if len(pib_mun) > 0 and "populacao_estimada" in pib_mun.columns else 0,
+            "dados_reais": economia_real
         },
         "assistencia": {
             "familias_cadastradas": len(cad_mun),
             "familias_extrema_pobreza": len(cad_mun[cad_mun["faixa_renda"] == "Extrema pobreza"]) if len(cad_mun) > 0 else 0,
-            "familias_bolsa_familia": len(cad_mun[cad_mun["recebe_bolsa_familia"] == True]) if len(cad_mun) > 0 else 0
+            "familias_bolsa_familia": len(cad_mun[cad_mun["recebe_bolsa_familia"] == True]) if len(cad_mun) > 0 else 0,
+            "dados_reais": False
         }
     }
 

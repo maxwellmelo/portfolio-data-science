@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from config.settings import settings, REGIOES
 from src.data.pam_extractor import PAMExtractor, generate_synthetic_pam_data
+from src.features.multicollinearity import VIFAnalyzer
 
 
 class DataLoader:
@@ -108,19 +109,11 @@ class DataLoader:
 
         df["regiao"] = df["estado"].map(estado_para_regiao)
 
-        # Taxa de aproveitamento (área colhida / área plantada)
-        if "area_plantada_ha" in df.columns and "area_colhida_ha" in df.columns:
-            df["taxa_aproveitamento"] = (
-                df["area_colhida_ha"] / df["area_plantada_ha"]
-            ).clip(0, 1)
-
-        # Produtividade relativa (produção / área plantada)
-        if "producao_ton" in df.columns and "area_plantada_ha" in df.columns:
-            df["produtividade_ton_ha"] = df["producao_ton"] / df["area_plantada_ha"]
-
-        # Valor por hectare
-        if "valor_producao_mil_reais" in df.columns and "area_colhida_ha" in df.columns:
-            df["valor_por_ha"] = (df["valor_producao_mil_reais"] * 1000) / df["area_colhida_ha"]
+        # DATA LEAKAGE REMOVED: taxa_aproveitamento, produtividade_ton_ha, valor_por_ha
+        # These features are derived from or highly correlated with the target variable.
+        # - taxa_aproveitamento: area_colhida correlates with yield
+        # - produtividade_ton_ha: direct calculation from producao_ton (target * area)
+        # - valor_por_ha: depends on production which is derived from target
 
         # Lag features (ano anterior)
         df = df.sort_values(["estado", "cultura", "ano"])
@@ -130,8 +123,8 @@ class DataLoader:
                 df[f"{col}_lag1"] = df.groupby(["estado", "cultura"])[col].shift(1)
 
         # Tendência (diferença com ano anterior)
-        if "rendimento_kg_ha" in df.columns:
-            df["rendimento_tendencia"] = df["rendimento_kg_ha"] - df["rendimento_kg_ha_lag1"]
+        # REMOVED: rendimento_tendencia uses current year rendimento (target variable)
+        # This would leak the target into the features
 
         # Porte do município/estado (baseado em área)
         if "area_plantada_ha" in df.columns:
@@ -141,7 +134,7 @@ class DataLoader:
                 labels=["Pequeno", "Médio", "Grande", "Muito Grande"]
             )
 
-        logger.info(f"Features derivadas adicionadas. Total colunas: {len(df.columns)}")
+        logger.info(f"Features derivadas adicionadas (sem data leakage). Total colunas: {len(df.columns)}")
 
         return df
 
@@ -149,21 +142,28 @@ class DataLoader:
         self,
         df: pd.DataFrame,
         target: str = "rendimento_kg_ha",
-        test_size: float = 0.2
+        test_size: float = 0.2,
+        use_time_series_split: bool = True,
+        check_multicollinearity: bool = True,
+        vif_threshold: float = 10.0,
+        remove_high_vif: bool = False
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
         """
-        Prepara dados para modelagem.
+        Prepara dados para modelagem com validação temporal adequada.
 
         Args:
             df: DataFrame com dados
             target: Coluna alvo
             test_size: Proporção do conjunto de teste
+            use_time_series_split: Se True, usa split temporal (anos anteriores para treino)
+                                  Se False, usa split aleatório (não recomendado)
+            check_multicollinearity: Se True, verifica VIF das features
+            vif_threshold: Limite de VIF para gerar warnings (default: 10.0)
+            remove_high_vif: Se True, remove automaticamente features com VIF alto
 
         Returns:
             X_train, X_test, y_train, y_test
         """
-        from sklearn.model_selection import train_test_split
-
         # Remover linhas com target nulo
         df_clean = df.dropna(subset=[target])
 
@@ -187,12 +187,83 @@ class DataLoader:
         # Preencher nulos restantes
         X = X.fillna(X.median(numeric_only=True))
 
-        # Split
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y,
-            test_size=test_size,
-            random_state=settings.model.random_state
-        )
+        # MULTICOLLINEARITY CHECK: Detect and optionally remove highly correlated features
+        if check_multicollinearity:
+            vif_analyzer = VIFAnalyzer(threshold=vif_threshold, warning_threshold=5.0)
+
+            # Calculate VIF for numeric features only
+            numeric_features = X.select_dtypes(include=[np.number]).columns.tolist()
+
+            if len(numeric_features) > 0:
+                vif_df = vif_analyzer.calculate_vif(X, numeric_features)
+
+                # Log features with high VIF
+                high_vif_features = vif_df[vif_df["vif"] > vif_threshold]
+
+                if len(high_vif_features) > 0:
+                    logger.warning(
+                        f"\n{'='*60}\n"
+                        f"MULTICOLLINEARITY DETECTED (VIF > {vif_threshold}):\n"
+                        f"{high_vif_features[['feature', 'vif']].to_string(index=False)}\n"
+                        f"{'='*60}"
+                    )
+
+                    if remove_high_vif:
+                        # Remove high VIF features iteratively
+                        X, removed_features = vif_analyzer.remove_high_vif_features(
+                            X,
+                            vif_df=vif_df,
+                            max_iterations=10
+                        )
+                        logger.info(
+                            f"Removed {len(removed_features)} high-VIF features: {removed_features}"
+                        )
+                    else:
+                        logger.info(
+                            "To automatically remove high-VIF features, set remove_high_vif=True"
+                        )
+                else:
+                    logger.info(f"No multicollinearity issues detected (all VIF <= {vif_threshold})")
+
+        # TIME SERIES SPLIT: Training data is always from years BEFORE test data
+        # This prevents data leakage and simulates real-world prediction scenarios
+        # where we use historical data to predict future outcomes
+        if use_time_series_split and "ano" in X.columns:
+            # Sort by year to ensure temporal ordering
+            df_sorted = pd.concat([X, y], axis=1).sort_values("ano")
+            X_sorted = df_sorted.drop(columns=[target])
+            y_sorted = df_sorted[target]
+
+            # Calculate split point based on test_size
+            split_idx = int(len(X_sorted) * (1 - test_size))
+
+            X_train = X_sorted.iloc[:split_idx]
+            X_test = X_sorted.iloc[split_idx:]
+            y_train = y_sorted.iloc[:split_idx]
+            y_test = y_sorted.iloc[split_idx:]
+
+            train_years = X_train["ano"].min(), X_train["ano"].max()
+            test_years = X_test["ano"].min(), X_test["ano"].max()
+
+            logger.info(
+                f"Time Series Split | Train anos: {train_years[0]}-{train_years[1]} | "
+                f"Test anos: {test_years[0]}-{test_years[1]}"
+            )
+        else:
+            # Fallback to random split (not recommended for time series)
+            from sklearn.model_selection import train_test_split
+
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y,
+                test_size=test_size,
+                random_state=settings.model.random_state
+            )
+
+            if not use_time_series_split:
+                logger.warning(
+                    "Using RANDOM split for time series data may cause data leakage! "
+                    "Consider setting use_time_series_split=True"
+                )
 
         logger.info(
             f"Dados preparados | X_train: {X_train.shape} | X_test: {X_test.shape}"

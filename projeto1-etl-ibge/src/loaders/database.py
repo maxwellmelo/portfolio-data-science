@@ -154,10 +154,13 @@ class DatabaseLoader:
 
     def __init__(self, connection_string: Optional[str] = None):
         """
-        Inicializa o loader.
+        Inicializa o loader e verifica conectividade com o banco de dados.
 
         Args:
             connection_string: String de conexão PostgreSQL
+
+        Raises:
+            SQLAlchemyError: Se não conseguir conectar ao banco de dados
         """
         self.connection_string = connection_string or settings.database.connection_string
         self.engine = create_engine(
@@ -170,6 +173,9 @@ class DatabaseLoader:
 
         logger.info(f"DatabaseLoader inicializado | host={settings.database.host}")
 
+        # Verificar conectividade imediatamente após inicialização
+        self.check_connection()
+
     def __enter__(self):
         return self
 
@@ -180,6 +186,56 @@ class DatabaseLoader:
         """Fecha conexões do pool."""
         self.engine.dispose()
         logger.info("DatabaseLoader fechado")
+
+    def check_connection(self) -> bool:
+        """
+        Verifica se a conexão com o banco de dados está funcionando.
+
+        Executa um query simples (SELECT 1) para confirmar que:
+        - A string de conexão está correta
+        - O servidor PostgreSQL está acessível
+        - As credenciais são válidas
+        - O banco de dados existe
+
+        Returns:
+            True se a conexão está funcionando
+
+        Raises:
+            SQLAlchemyError: Se houver erro ao conectar ao banco
+
+        Example:
+            >>> loader = DatabaseLoader()
+            >>> if loader.check_connection():
+            ...     print("Banco de dados acessível!")
+        """
+        try:
+            logger.debug("Verificando conectividade com o banco de dados...")
+
+            with self.engine.connect() as conn:
+                # Executar query simples para validar conexão
+                result = conn.execute(text("SELECT 1 as health_check"))
+                row = result.fetchone()
+
+                if row and row[0] == 1:
+                    logger.info(
+                        f"Conexão com banco de dados OK | "
+                        f"host={settings.database.host} | "
+                        f"database={settings.database.database}"
+                    )
+                    return True
+                else:
+                    logger.error("Health check retornou resultado inesperado")
+                    raise SQLAlchemyError("Health check falhou")
+
+        except SQLAlchemyError as e:
+            error_msg = (
+                f"Falha ao conectar ao banco de dados | "
+                f"host={settings.database.host} | "
+                f"database={settings.database.database} | "
+                f"erro={str(e)}"
+            )
+            logger.error(error_msg)
+            raise SQLAlchemyError(error_msg) from e
 
     def _upsert(
         self,

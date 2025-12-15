@@ -8,17 +8,20 @@ from plotly.subplots import make_subplots
 import pandas as pd
 from typing import Optional, List, Dict
 import numpy as np
+import sys
+from pathlib import Path
+
+# Adicionar src ao path para importar config
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from utils.config import CHART_CONSTANTS, CHART_CONFIG
 
 
 class ChartBuilder:
     """Construtor de gráficos interativos com Plotly"""
 
-    def __init__(self, template: str = "plotly_white"):
-        self.template = template
-        self.color_palette = [
-            '#1f7a1f', '#ff6b6b', '#4ecdc4', '#ffe66d', '#a8e6cf',
-            '#95e1d3', '#f38181', '#aa96da', '#fcbad3', '#ffffd2'
-        ]
+    def __init__(self, template: str = None):
+        self.template = template or CHART_CONFIG["template"]
+        self.color_palette = CHART_CONFIG["color_palette"]
 
     def create_time_series(self,
                           df: pd.DataFrame,
@@ -26,7 +29,7 @@ class ChartBuilder:
                           y_col: str,
                           title: str,
                           group_col: Optional[str] = None,
-                          height: int = 500) -> go.Figure:
+                          height: int = None) -> go.Figure:
         """
         Cria gráfico de série temporal
 
@@ -59,8 +62,8 @@ class ChartBuilder:
                 y=df[y_col],
                 mode='lines+markers',
                 name=y_col,
-                line=dict(color=self.color_palette[0], width=3),
-                marker=dict(size=8)
+                line=dict(color=self.color_palette[0], width=CHART_CONSTANTS["line_width_bold"]),
+                marker=dict(size=CHART_CONSTANTS["marker_size_default"])
             ))
 
             fig.update_layout(
@@ -69,7 +72,7 @@ class ChartBuilder:
             )
 
         fig.update_layout(
-            height=height,
+            height=height or CHART_CONSTANTS["height_default"],
             hovermode='x unified',
             xaxis_title=x_col.replace('_', ' ').title(),
             yaxis_title=y_col.replace('_', ' ').title(),
@@ -367,32 +370,32 @@ class ChartBuilder:
 
         fig = go.Figure()
 
-        # Dados reais
+        # Dados reais (usando constantes)
         fig.add_trace(go.Scatter(
             x=x,
             y=y,
             mode='lines+markers',
             name='Dados Reais',
-            line=dict(color=self.color_palette[0], width=3),
-            marker=dict(size=8)
+            line=dict(color=self.color_palette[0], width=CHART_CONSTANTS["line_width_bold"]),
+            marker=dict(size=CHART_CONSTANTS["marker_size_default"])
         ))
 
-        # Linha de tendência
+        # Linha de tendência (usando constantes)
         fig.add_trace(go.Scatter(
             x=all_years,
             y=trend_line,
             mode='lines',
             name='Tendência',
-            line=dict(color=self.color_palette[1], dash='dash', width=2)
+            line=dict(color=self.color_palette[1], dash='dash', width=CHART_CONSTANTS["line_width_normal"])
         ))
 
-        # Projeção
+        # Projeção (usando constantes)
         fig.add_trace(go.Scatter(
             x=future_years,
             y=p(future_years),
             mode='markers',
             name='Projeção',
-            marker=dict(color=self.color_palette[2], size=10, symbol='diamond')
+            marker=dict(color=self.color_palette[2], size=CHART_CONSTANTS["marker_size_large"], symbol='diamond')
         ))
 
         fig.update_layout(

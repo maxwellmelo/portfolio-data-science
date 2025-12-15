@@ -1,6 +1,48 @@
-# Pipeline ETL - Dados Socioeconômicos do IBGE
+# Pipeline ETL - Dados Socioeconomicos do IBGE
 
-Pipeline de extração, transformação e carregamento (ETL) de dados socioeconômicos brasileiros utilizando a API do IBGE.
+<div align="center">
+
+![Python](https://img.shields.io/badge/Python-3.11+-3776ab.svg?style=flat&logo=python&logoColor=white)
+![IBGE](https://img.shields.io/badge/API-IBGE-blue.svg?style=flat)
+![Plotly](https://img.shields.io/badge/Plotly-Interativo-3F4F75.svg?style=flat&logo=plotly&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
+**Pipeline de extracao, transformacao e carregamento (ETL) de dados socioeconomicos brasileiros**
+
+[Demo Notebook](#notebook-demonstrativo) | [Como Executar](#como-executar) | [API IBGE](#api-do-ibge)
+
+</div>
+
+---
+
+## Notebook Demonstrativo
+
+O notebook [`notebooks/demo_etl_ibge.ipynb`](notebooks/demo_etl_ibge.ipynb) demonstra o pipeline ETL em acao:
+
+### Visualizacoes Incluidas
+
+| Analise | Descricao |
+|---------|-----------|
+| Treemap de Municipios | Distribuicao por regiao e estado |
+| Top 10 Estados | Populacao por estado (barras) |
+| Evolucao Temporal | Populacao dos maiores estados |
+| Cards de Indicadores | Metricas consolidadas |
+
+### Dados Extraidos
+
+```
+RESUMO DO PIPELINE ETL
+   Regioes: 5 registros
+   Estados: 27 registros
+   Municipios: 5.570 registros
+   Populacao: 108 registros
+```
+
+---
+
+## Problema de Negocio
+
+Pipeline de extracao, transformacao e carregamento (ETL) de dados socioeconomicos brasileiros utilizando a API do IBGE.
 
 ## Problema de Negócio
 
@@ -183,7 +225,7 @@ O notebook inclui visualizações interativas:
 | Localidades | `/v1/localidades/municipios` | Municípios |
 | SIDRA | `/v3/agregados/6579` | População estimada |
 | SIDRA | `/v3/agregados/5938` | PIB municipal |
-| SIDRA | `/v3/agregados/37` | PIB per capita |
+| SIDRA | `/v3/agregados/5938/variaveis/513` | PIB per capita |
 
 ### Documentação Oficial
 - [API de Localidades](https://servicodados.ibge.gov.br/api/docs/localidades)
@@ -264,4 +306,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-*Projeto desenvolvido como parte do portfólio de Data Science*
+*Projeto desenvolvido como parte do portfolio de Data Science*

@@ -93,6 +93,69 @@ CHART_CONFIG = {
     "width_default": 800
 }
 
+# Constantes de mapas - Zoom levels e tamanhos
+MAP_CONFIG = {
+    # Zoom levels
+    "zoom_brazil": 4,
+    "zoom_state": 6,
+    "zoom_region": 5,
+
+    # Marker sizes
+    "marker_size_min": 10,
+    "marker_size_max": 40,
+    "marker_radius_base": 10,
+    "marker_radius_multiplier": 30,
+
+    # Circle marker properties
+    "circle_fill_opacity": 0.6,
+
+    # Heatmap properties
+    "heatmap_radius": 50,
+    "heatmap_blur": 40,
+
+    # Map colors by quantile
+    "color_high": "red",        # > 75%
+    "color_medium_high": "orange",  # 50-75%
+    "color_medium_low": "yellow",   # 25-50%
+    "color_low": "green",       # < 25%
+    "color_darkred": "darkred",
+
+    # Map dimensions
+    "map_width": 1200,
+    "map_height": 600,
+    "map_height_small": 400,
+    "map_height_medium": 500
+}
+
+# Constantes de gráficos
+CHART_CONSTANTS = {
+    # Tamanhos padrão
+    "height_default": 500,
+    "height_small": 400,
+
+    # Line width e marker sizes
+    "line_width_bold": 3,
+    "line_width_normal": 2,
+    "marker_size_default": 8,
+    "marker_size_large": 10,
+
+    # Gauge chart thresholds (baseados em km²)
+    "gauge_threshold_good": 5000,
+    "gauge_threshold_warning": 10000,
+    "gauge_max_value": 20000,
+
+    # Trend forecast
+    "forecast_years_default": 3
+}
+
+# Constantes de API e timeouts
+API_CONFIG = {
+    "timeout_seconds": 15,  # Reduzido de 60s para 15s
+    "max_retries": 3,
+    "retry_backoff_factor": 2,  # Exponential backoff: 2^attempt segundos
+    "retry_status_codes": [408, 429, 500, 502, 503, 504]  # HTTP codes para retry
+}
+
 # Range de anos disponíveis
 ANOS_DISPONIVEIS = list(range(2000, 2026))
 

@@ -3,12 +3,14 @@ Extrator de dados populacionais do IBGE.
 Utiliza o agregado 6579 (Estimativas populacionais).
 """
 
-from typing import Dict, List, Optional
+from typing import Optional
 from datetime import datetime
 import pandas as pd
 
 from .ibge_client import IBGEClient
 from src.utils.logger import get_logger
+from src.utils.sidra_parser import parse_sidra_response
+from config.constants import AGREGADO_POPULACAO
 
 logger = get_logger(__name__)
 
@@ -21,7 +23,7 @@ class PopulacaoExtractor:
     Dados disponíveis a partir de 2001, atualizados anualmente.
     """
 
-    AGREGADO_ID = 6579  # Estimativas populacionais
+    AGREGADO_ID = AGREGADO_POPULACAO
 
     def __init__(self, client: Optional[IBGEClient] = None):
         """
@@ -40,54 +42,6 @@ class PopulacaoExtractor:
         if self._owns_client:
             self._client.close()
 
-    def _parse_sidra_response(self, data: List[Dict]) -> pd.DataFrame:
-        """
-        Converte resposta da API SIDRA para DataFrame.
-
-        Args:
-            data: Resposta bruta da API
-
-        Returns:
-            DataFrame estruturado
-        """
-        if not data:
-            return pd.DataFrame()
-
-        records = []
-
-        for variavel in data:
-            variavel_id = variavel.get("id")
-            variavel_nome = variavel.get("variavel")
-            unidade = variavel.get("unidade")
-
-            resultados = variavel.get("resultados", [])
-
-            for resultado in resultados:
-                series = resultado.get("series", [])
-
-                for serie in series:
-                    localidade = serie.get("localidade", {})
-                    localidade_id = localidade.get("id")
-                    localidade_nome = localidade.get("nome")
-                    localidade_nivel = localidade.get("nivel", {}).get("nome")
-
-                    valores = serie.get("serie", {})
-
-                    for ano, valor in valores.items():
-                        # Ignorar valores nulos ou marcados como "-"
-                        if valor and valor != "-" and valor != "...":
-                            records.append({
-                                "variavel_id": variavel_id,
-                                "variavel_nome": variavel_nome,
-                                "unidade": unidade,
-                                "localidade_id": localidade_id,
-                                "localidade_nome": localidade_nome,
-                                "localidade_nivel": localidade_nivel,
-                                "ano": int(ano),
-                                "valor": float(valor) if valor else None
-                            })
-
-        return pd.DataFrame(records)
 
     def extract_por_estado(
         self,
@@ -110,7 +64,7 @@ class PopulacaoExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         elapsed = (datetime.now() - start_time).total_seconds()
         logger.info(
@@ -152,7 +106,7 @@ class PopulacaoExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         elapsed = (datetime.now() - start_time).total_seconds()
         logger.info(
@@ -184,7 +138,7 @@ class PopulacaoExtractor:
             anos=anos
         )
 
-        df = self._parse_sidra_response(data)
+        df = parse_sidra_response(data)
 
         elapsed = (datetime.now() - start_time).total_seconds()
         logger.info(

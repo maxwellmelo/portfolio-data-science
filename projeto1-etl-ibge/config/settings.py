@@ -45,7 +45,7 @@ class IBGEApiSettings(BaseSettings):
         default="https://servicodados.ibge.gov.br/api/v3/agregados",
         alias="IBGE_SIDRA_URL"
     )
-    timeout: int = Field(default=30, alias="IBGE_TIMEOUT")
+    timeout: int = Field(default=60, alias="IBGE_TIMEOUT")
     retry_attempts: int = Field(default=3, alias="IBGE_RETRY_ATTEMPTS")
     rate_limit_delay: float = Field(default=0.5, alias="IBGE_RATE_LIMIT_DELAY")
 

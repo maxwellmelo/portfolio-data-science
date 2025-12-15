@@ -18,11 +18,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+import re
 
 # Adicionar diretório raiz ao path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config.settings import settings
+from config.constants import ANO_MINIMO, ANO_MAXIMO
 from src.utils.logger import setup_logger, get_logger
 from src.extractors import (
     IBGEClient,
@@ -313,6 +315,78 @@ class ETLPipeline:
             self.loader.close()
 
 
+def validate_anos_parameter(anos_str: str) -> None:
+    """
+    Valida o parâmetro --anos fornecido pelo usuário.
+
+    O formato esperado é uma string com anos separados por pipe (|),
+    por exemplo: "2020|2021|2022"
+
+    Args:
+        anos_str: String com anos separados por pipe
+
+    Raises:
+        ValueError: Se o formato for inválido ou anos fora do range permitido
+
+    Example:
+        >>> validate_anos_parameter("2020|2021|2022")  # OK
+        >>> validate_anos_parameter("2020,2021")  # Erro: formato inválido
+        >>> validate_anos_parameter("1990|2021")  # Erro: ano 1990 fora do range
+    """
+    if not anos_str:
+        return  # None ou vazio é permitido (significa todos os anos)
+
+    # Verificar formato básico: deve conter apenas dígitos e pipes
+    if not re.match(r'^[\d|]+$', anos_str):
+        raise ValueError(
+            f"Formato inválido para --anos: '{anos_str}'\n"
+            f"Use o formato: 2020|2021|2022 (anos separados por pipe '|')"
+        )
+
+    # Extrair e validar cada ano individualmente
+    anos = anos_str.split('|')
+
+    if not anos:
+        raise ValueError("Nenhum ano fornecido no parâmetro --anos")
+
+    anos_invalidos = []
+    anos_fora_range = []
+
+    for ano_str in anos:
+        # Verificar se é número válido
+        if not ano_str.isdigit():
+            anos_invalidos.append(ano_str)
+            continue
+
+        ano = int(ano_str)
+
+        # Verificar se está dentro do range permitido
+        if ano < ANO_MINIMO or ano > ANO_MAXIMO:
+            anos_fora_range.append(ano)
+
+    # Reportar todos os erros encontrados
+    erros = []
+
+    if anos_invalidos:
+        erros.append(f"Anos inválidos: {', '.join(anos_invalidos)}")
+
+    if anos_fora_range:
+        erros.append(
+            f"Anos fora do range permitido ({ANO_MINIMO}-{ANO_MAXIMO}): "
+            f"{', '.join(map(str, anos_fora_range))}"
+        )
+
+    if erros:
+        raise ValueError(
+            f"Erro na validação do parâmetro --anos:\n" +
+            "\n".join(f"  - {erro}" for erro in erros) +
+            f"\n\nFormato correto: 2020|2021|2022"
+            f"\nRange permitido: {ANO_MINIMO}-{ANO_MAXIMO}"
+        )
+
+    logger.debug(f"Parâmetro --anos validado: {len(anos)} anos ({anos_str})")
+
+
 def main():
     """Função principal do CLI."""
     parser = argparse.ArgumentParser(
@@ -368,6 +442,14 @@ Dados extraídos:
         log_level=args.log_level,
         log_file="logs/etl.log"
     )
+
+    # Validar parâmetro --anos antes de iniciar o pipeline
+    try:
+        validate_anos_parameter(args.anos)
+    except ValueError as e:
+        logger.error(str(e))
+        print(f"\nERRO: {str(e)}\n", file=sys.stderr)
+        return 1
 
     logger.info(f"Iniciando ETL | extract={args.extract} | output={args.output}")
 

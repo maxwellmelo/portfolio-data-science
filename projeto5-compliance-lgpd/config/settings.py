@@ -85,11 +85,37 @@ class AnonymizationSettings(BaseSettings):
     mask_telefone: str = "(**) *****-****"
 
     # Salt para hash (IMPORTANTE: mudar em produção!)
+    # Valor padrão inseguro - será validado em runtime
     hash_salt: str = Field(default="CHANGE_THIS_SALT_IN_PRODUCTION", alias="HASH_SALT")
+
+    # Comprimento mínimo do salt para segurança
+    min_salt_length: int = 16
 
     class Config:
         env_file = ".env"
         extra = "ignore"
+
+    def is_salt_secure(self) -> bool:
+        """Verifica se o salt é seguro para uso em produção."""
+        insecure_defaults = [
+            "CHANGE_THIS_SALT_IN_PRODUCTION",
+            "default_salt",
+            "salt",
+            "123456",
+            ""
+        ]
+        return (
+            self.hash_salt not in insecure_defaults and
+            len(self.hash_salt) >= self.min_salt_length
+        )
+
+    def get_salt_warning(self) -> str:
+        """Retorna mensagem de aviso sobre segurança do salt."""
+        if self.hash_salt == "CHANGE_THIS_SALT_IN_PRODUCTION":
+            return "AVISO CRITICO: Salt padrao em uso! Defina HASH_SALT no arquivo .env"
+        elif len(self.hash_salt) < self.min_salt_length:
+            return f"AVISO: Salt muito curto ({len(self.hash_salt)} chars). Minimo recomendado: {self.min_salt_length}"
+        return ""
 
 
 class ReportSettings(BaseSettings):

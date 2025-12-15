@@ -55,7 +55,10 @@ class FeatureEngineer:
         lags: List[int] = [1, 2, 3]
     ) -> pd.DataFrame:
         """
-        Cria features temporais (lag, média móvel, tendência).
+        Cria features temporais usando APENAS valores passados (sem data leakage).
+
+        IMPORTANTE: Apenas lag features são seguras. Features como média móvel,
+        cummax, cummin que incluem o valor atual causam data leakage.
 
         Args:
             df: DataFrame ordenado por tempo
@@ -64,37 +67,32 @@ class FeatureEngineer:
             lags: Lista de lags a criar
 
         Returns:
-            DataFrame com features temporais
+            DataFrame com features temporais (apenas lags)
         """
         df = df.copy()
         df = df.sort_values(group_cols + ["ano"])
 
-        # Lag features
+        # Lag features - SEGURO: usa apenas valores passados
         for lag in lags:
             col_name = f"{value_col}_lag{lag}"
             df[col_name] = df.groupby(group_cols)[value_col].shift(lag)
 
-        # Média móvel (3 anos)
-        df[f"{value_col}_ma3"] = df.groupby(group_cols)[value_col].transform(
-            lambda x: x.rolling(window=3, min_periods=1).mean()
-        )
+        # Taxa de crescimento baseada em LAG (ano anterior vs 2 anos atrás)
+        # SEGURO: não usa valor atual
+        lag1_col = f"{value_col}_lag1"
+        lag2_col = f"{value_col}_lag2"
+        if lag1_col in df.columns and lag2_col in df.columns:
+            df[f"{value_col}_growth_rate"] = (
+                (df[lag1_col] - df[lag2_col]) / df[lag2_col].replace(0, np.nan)
+            )
 
-        # Desvio padrão móvel (volatilidade)
-        df[f"{value_col}_std3"] = df.groupby(group_cols)[value_col].transform(
-            lambda x: x.rolling(window=3, min_periods=1).std()
-        )
+        # DATA LEAKAGE REMOVIDO:
+        # - ma3, std3: rolling window inclui valor atual
+        # - diff: diferença com período anterior usa valor atual
+        # - pct_change: usa valor atual
+        # - cummax, cummin: incluem valor atual na agregação
 
-        # Tendência (diferença com período anterior)
-        df[f"{value_col}_diff"] = df.groupby(group_cols)[value_col].diff()
-
-        # Taxa de crescimento
-        df[f"{value_col}_pct_change"] = df.groupby(group_cols)[value_col].pct_change()
-
-        # Máximo e mínimo histórico
-        df[f"{value_col}_cummax"] = df.groupby(group_cols)[value_col].cummax()
-        df[f"{value_col}_cummin"] = df.groupby(group_cols)[value_col].cummin()
-
-        logger.info(f"Features temporais criadas para '{value_col}'")
+        logger.info(f"Features temporais criadas para '{value_col}' (apenas lags, sem data leakage)")
 
         return df
 
@@ -114,20 +112,19 @@ class FeatureEngineer:
         if "area_plantada_ha" in df.columns and "rendimento_kg_ha_lag1" in df.columns:
             df["area_x_rend_lag"] = df["area_plantada_ha"] * df["rendimento_kg_ha_lag1"]
 
-        # Eficiência (produção / área plantada)
-        if "producao_ton" in df.columns and "area_plantada_ha" in df.columns:
-            df["eficiencia"] = df["producao_ton"] / df["area_plantada_ha"].replace(0, np.nan)
+        # DATA LEAKAGE REMOVED: eficiencia, valor_por_ton, razao_colheita, perda_area
+        # These features are derived from the target variable (rendimento_kg_ha) or
+        # directly correlated with it (producao_ton = rendimento * area_colhida).
+        # Using them would leak information from the target, causing overly optimistic
+        # performance metrics that won't generalize to real predictions.
+        #
+        # Original removed features:
+        # - eficiencia: producao_ton / area_plantada_ha (producao is target * area)
+        # - valor_por_ton: requires producao_ton (derived from target)
+        # - razao_colheita: area_colhida / area_plantada (area_colhida correlates with target)
+        # - perda_area: 1 - razao_colheita (derived from area_colhida)
 
-        # Valor por tonelada
-        if "valor_producao_mil_reais" in df.columns and "producao_ton" in df.columns:
-            df["valor_por_ton"] = (df["valor_producao_mil_reais"] * 1000) / df["producao_ton"].replace(0, np.nan)
-
-        # Razão área colhida / plantada (perda)
-        if "area_colhida_ha" in df.columns and "area_plantada_ha" in df.columns:
-            df["razao_colheita"] = df["area_colhida_ha"] / df["area_plantada_ha"].replace(0, np.nan)
-            df["perda_area"] = 1 - df["razao_colheita"]
-
-        logger.info("Features de interação criadas")
+        logger.info("Features de interação criadas (sem data leakage)")
 
         return df
 
@@ -137,33 +134,32 @@ class FeatureEngineer:
         group_col: str = "estado"
     ) -> pd.DataFrame:
         """
-        Cria features agregadas por grupo.
+        Cria features agregadas por grupo usando apenas dados passados.
+
+        IMPORTANTE: Agregações do ano atual com o target causam data leakage.
+        Apenas area_plantada_ha é segura para agregar no ano atual.
 
         Args:
             df: DataFrame
             group_col: Coluna para agrupar
 
         Returns:
-            DataFrame com features agregadas
+            DataFrame com features agregadas (sem data leakage)
         """
         df = df.copy()
 
-        # Média do grupo
-        for col in ["rendimento_kg_ha", "area_plantada_ha"]:
-            if col in df.columns:
-                group_mean = df.groupby([group_col, "ano"])[col].transform("mean")
-                df[f"{col}_{group_col}_mean"] = group_mean
+        # Agregações de area_plantada_ha - SEGURO: não é o target
+        if "area_plantada_ha" in df.columns:
+            group_mean = df.groupby([group_col, "ano"])["area_plantada_ha"].transform("mean")
+            df[f"area_plantada_ha_{group_col}_mean"] = group_mean
+            df[f"area_plantada_ha_{group_col}_dev"] = df["area_plantada_ha"] - group_mean
 
-                # Desvio em relação à média do grupo
-                df[f"{col}_{group_col}_dev"] = df[col] - group_mean
+        # DATA LEAKAGE REMOVIDO:
+        # - rendimento_kg_ha_estado_mean: usa target do ano atual
+        # - rendimento_kg_ha_estado_dev: usa target do ano atual
+        # - ranking_rendimento: usa target do ano atual
 
-        # Ranking dentro do grupo
-        if "rendimento_kg_ha" in df.columns:
-            df["ranking_rendimento"] = df.groupby([group_col, "ano"])["rendimento_kg_ha"].rank(
-                ascending=False, method="dense"
-            )
-
-        logger.info(f"Features agregadas criadas para '{group_col}'")
+        logger.info(f"Features agregadas criadas para '{group_col}' (sem data leakage)")
 
         return df
 
