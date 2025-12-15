@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Data Science - Maxwell</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <!-- Header Principal -->
+    <header class="header" style="padding: 3rem 0;">
+        <h1 style="font-size: 3rem;">Portfolio Data Science</h1>
+        <p style="font-size: 1.3rem; margin-top: 1rem;">5 Projetos End-to-End com Dados Reais do Brasil</p>
+        <div style="margin-top: 1.5rem;">
+            <span class="badge badge-primary">Python</span>
+            <span class="badge badge-secondary">Machine Learning</span>
+            <span class="badge badge-success">APIs REST</span>
+            <span class="badge badge-warning">Dashboards</span>
+        </div>
+        <div style="margin-top: 2rem;">
+            <a href="https://github.com/maxwellmelo/portfolio-data-science" class="btn btn-primary" target="_blank">
+                Ver no GitHub
+            </a>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">Portfolio Data Science</a>
+            <div class="nav-links">
+                <a href="#projetos">Projetos</a>
+                <a href="#tecnologias">Tecnologias</a>
+                <a href="#sobre">Sobre</a>
+                <a href="https://github.com/maxwellmelo/portfolio-data-science" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Destaques -->
+        <section class="section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Projetos Completos</span>
+                </div>
+                <div class="stat-card secondary">
+                    <span class="stat-value">R2=0.90</span>
+                    <span class="stat-label">Modelo ML Safras</span>
+                </div>
+                <div class="stat-card success">
+                    <span class="stat-value">5.570</span>
+                    <span class="stat-label">Municipios IBGE</span>
+                </div>
+                <div class="stat-card warning">
+                    <span class="stat-value">7</span>
+                    <span class="stat-label">Metodos Anonimizacao</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projetos -->
+        <section class="section" id="projetos">
+            <h2 class="section-title">Projetos</h2>
+
+            <div class="projects-grid">
+                <!-- Projeto 1 -->
+                <div class="project-card">
+                    <div class="project-card-header">
+                        <h3>1. Pipeline ETL - IBGE</h3>
+                        <span class="badge badge-success">Completo</span>
+                    </div>
+                    <div class="project-card-body">
+                        <p>Pipeline de extracao, transformacao e carregamento de dados socioeconomicos do Brasil via API IBGE.</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Pandas</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <strong>Resultados:</strong>
+                            <ul style="margin: 0.5rem 0; padding-left: 1.2rem; color: var(--gray);">
+                                <li>5 Regioes, 27 Estados, 5.570 Municipios</li>
+                                <li>Dados de Populacao e PIB</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <a href="projetos/projeto1-etl-ibge.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Ver Detalhes</a>
+                            <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem;" target="_blank">Colab</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projeto 2 -->
+                <div class="project-card">
+                    <div class="project-card-header" style="background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);">
+                        <h3>2. Dashboard Ambiental</h3>
+                        <span class="badge badge-success">Completo</span>
+                    </div>
+                    <div class="project-card-body">
+                        <p>Dashboard interativo para analise de desmatamento no Brasil com dados PRODES/INPE.</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Streamlit</span>
+                            <span class="tech-tag">Plotly</span>
+                            <span class="tech-tag">GeoPandas</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <strong>Resultados:</strong>
+                            <ul style="margin: 0.5rem 0; padding-left: 1.2rem; color: var(--gray);">
+                                <li>6 Biomas monitorados</li>
+                                <li>Reducao Cerrado 2025: -11.49%</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <a href="projetos/projeto2-dashboard-ambiental.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Ver Detalhes</a>
+                            <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem;" target="_blank">Colab</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projeto 3 -->
+                <div class="project-card">
+                    <div class="project-card-header" style="background: linear-gradient(135deg, #1a5f2a 0%, #2d8a3e 100%);">
+                        <h3>3. Modelo Preditivo Safras</h3>
+                        <span class="badge badge-success">Completo</span>
+                    </div>
+                    <div class="project-card-body">
+                        <p>Machine Learning para previsao de rendimento agricola com dados PAM/IBGE.</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Scikit-learn</span>
+                            <span class="tech-tag">XGBoost</span>
+                            <span class="tech-tag">LightGBM</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <strong>Resultados:</strong>
+                            <ul style="margin: 0.5rem 0; padding-left: 1.2rem; color: var(--gray);">
+                                <li>R2 = 0.90 (Gradient Boosting)</li>
+                                <li>MAPE = 11.11%</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <a href="projetos/projeto3-modelo-preditivo.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Ver Detalhes</a>
+                            <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem;" target="_blank">Colab</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projeto 4 -->
+                <div class="project-card">
+                    <div class="project-card-header" style="background: linear-gradient(135deg, #009688 0%, #00695c 100%);">
+                        <h3>4. Integracao Multissetorial</h3>
+                        <span class="badge badge-success">Completo</span>
+                    </div>
+                    <div class="project-card-body">
+                        <p>API REST para dados governamentais do Piaui com dados reais IBGE.</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">FastAPI</span>
+                            <span class="tech-tag">SQLAlchemy</span>
+                            <span class="tech-tag">Docker</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <strong>Resultados:</strong>
+                            <ul style="margin: 0.5rem 0; padding-left: 1.2rem; color: var(--gray);">
+                                <li>224 Municipios do Piaui</li>
+                                <li>PIB + Populacao IBGE Real</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <a href="projetos/projeto4-integracao-multissetorial.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Ver Detalhes</a>
+                            <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem;" target="_blank">Colab</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projeto 5 -->
+                <div class="project-card">
+                    <div class="project-card-header" style="background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);">
+                        <h3>5. Compliance LGPD</h3>
+                        <span class="badge badge-success">Completo</span>
+                    </div>
+                    <div class="project-card-body">
+                        <p>Sistema de auditoria e anonimizacao de dados pessoais em conformidade com a LGPD.</p>
+                        <div class="tech-stack">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Faker</span>
+                            <span class="tech-tag">Regex</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <strong>Resultados:</strong>
+                            <ul style="margin: 0.5rem 0; padding-left: 1.2rem; color: var(--gray);">
+                                <li>7 Metodos de Anonimizacao</li>
+                                <li>15+ Tipos de PII detectados</li>
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <a href="projetos/projeto5-compliance-lgpd.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Ver Detalhes</a>
+                            <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem;" target="_blank">Colab</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tecnologias -->
+        <section class="section" id="tecnologias">
+            <h2 class="section-title">Tecnologias e Competencias</h2>
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Tecnologias</th>
+                                <th>Projetos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Linguagem</strong></td>
+                                <td>Python 3.11+</td>
+                                <td>1, 2, 3, 4, 5</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Science</strong></td>
+                                <td>Pandas, NumPy, Scikit-learn</td>
+                                <td>1, 2, 3, 4, 5</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Visualizacao</strong></td>
+                                <td>Plotly, Streamlit, Matplotlib, Folium</td>
+                                <td>1, 2, 3, 4, 5</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Machine Learning</strong></td>
+                                <td>XGBoost, LightGBM, Gradient Boosting</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Backend</strong></td>
+                                <td>FastAPI, SQLAlchemy, Pydantic</td>
+                                <td>1, 4</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Banco de Dados</strong></td>
+                                <td>PostgreSQL</td>
+                                <td>1, 4</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Testes</strong></td>
+                                <td>Pytest</td>
+                                <td>1, 3, 4, 5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-top: 2rem;">Habilidades Demonstradas</h4>
+                <div class="stats-grid" style="margin-top: 1rem;">
+                    <div class="stat-card">
+                        <span class="stat-value" style="font-size: 1.5rem;">ETL</span>
+                        <span class="stat-label">Projetos 1, 4</span>
+                    </div>
+                    <div class="stat-card secondary">
+                        <span class="stat-value" style="font-size: 1.5rem;">ML</span>
+                        <span class="stat-label">Projeto 3</span>
+                    </div>
+                    <div class="stat-card success">
+                        <span class="stat-value" style="font-size: 1.5rem;">APIs</span>
+                        <span class="stat-label">Projeto 4</span>
+                    </div>
+                    <div class="stat-card warning">
+                        <span class="stat-value" style="font-size: 1.5rem;">Privacy</span>
+                        <span class="stat-label">Projeto 5</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sobre -->
+        <section class="section" id="sobre">
+            <h2 class="section-title">Sobre</h2>
+            <div class="card">
+                <p>Portfolio desenvolvido para demonstrar competencias em todo o ciclo de vida de projetos de dados: desde a extracao e transformacao (ETL), passando por analise exploratoria e modelagem preditiva, ate a disponibilizacao via APIs e dashboards interativos.</p>
+
+                <div class="insights-box">
+                    <h4>Diferenciais</h4>
+                    <ul>
+                        <li>5 projetos completos com <strong>dados publicos brasileiros</strong></li>
+                        <li><strong>Dados reais do IBGE</strong> integrados via API SIDRA</li>
+                        <li>Notebooks com <strong>visualizacoes interativas</strong> (Plotly)</li>
+                        <li>Boas praticas: testes, logging, documentacao</li>
+                        <li>Foco em <strong>problemas reais de negocio</strong></li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="https://github.com/maxwellmelo/portfolio-data-science" class="btn btn-primary" target="_blank">
+                        Ver Repositorio Completo no GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Desenvolvido por <strong>Maxwell</strong> - Especialista em Dados</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="https://github.com/maxwellmelo/portfolio-data-science" target="_blank">GitHub</a>
+        </p>
+        <p style="margin-top: 1rem; opacity: 0.7; font-size: 0.9rem;">
+            Ultima Atualizacao: Dezembro 2025
+        </p>
+    </footer>
+</body>
+</html>

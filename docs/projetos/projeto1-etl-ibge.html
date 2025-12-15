@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline ETL IBGE - Portfolio Data Science</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">Portfolio Data Science</a>
+            <div class="nav-links">
+                <a href="../index.html">Inicio</a>
+                <a href="projeto1-etl-ibge.html">ETL IBGE</a>
+                <a href="projeto2-dashboard-ambiental.html">Dashboard Ambiental</a>
+                <a href="projeto3-modelo-preditivo.html">Modelo Preditivo</a>
+                <a href="projeto4-integracao-multissetorial.html">Integracao PI</a>
+                <a href="projeto5-compliance-lgpd.html">Compliance LGPD</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Pipeline ETL - Dados IBGE</h1>
+        <p>Extracao, Transformacao e Carregamento de Dados Socioeconomicos do Brasil</p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-primary">Python</span>
+            <span class="badge badge-secondary">Pandas</span>
+            <span class="badge badge-success">API IBGE</span>
+            <span class="badge badge-warning">PostgreSQL</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">5</span>
+                <span class="stat-label">Regioes</span>
+            </div>
+            <div class="stat-card secondary">
+                <span class="stat-value">27</span>
+                <span class="stat-label">Estados</span>
+            </div>
+            <div class="stat-card success">
+                <span class="stat-value">5.570</span>
+                <span class="stat-label">Municipios</span>
+            </div>
+            <div class="stat-card warning">
+                <span class="stat-value">203M</span>
+                <span class="stat-label">Populacao Brasil</span>
+            </div>
+        </div>
+
+        <!-- Sobre o Projeto -->
+        <section class="section">
+            <h2 class="section-title">Sobre o Projeto</h2>
+            <div class="card">
+                <p>Pipeline ETL robusto e escalavel para extracao de dados socioeconomicos do Brasil diretamente da API oficial do IBGE. O sistema consolida dados de <strong>localidades</strong>, <strong>populacao</strong> e <strong>PIB</strong> em uma base unica, pronta para analise.</p>
+
+                <div class="insights-box">
+                    <h4>Problemas Resolvidos</h4>
+                    <ul>
+                        <li><strong>Fragmentacao de dados:</strong> Consolida dados de multiplas APIs em base unica</li>
+                        <li><strong>Atualizacao manual:</strong> Automatiza extracao e atualizacao</li>
+                        <li><strong>Qualidade de dados:</strong> Validacao com Pydantic</li>
+                        <li><strong>Acessibilidade:</strong> Dados em CSV ou PostgreSQL</li>
+                    </ul>
+                </div>
+
+                <h4>Tecnologias Utilizadas</h4>
+                <div class="tech-stack">
+                    <span class="tech-tag">Python 3.11+</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">Requests/HTTPX</span>
+                    <span class="tech-tag">Pydantic</span>
+                    <span class="tech-tag">SQLAlchemy</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                    <span class="tech-tag">Plotly</span>
+                    <span class="tech-tag">Pytest</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visualizacao 1: Treemap -->
+        <section class="section">
+            <h2 class="section-title">Distribuicao de Municipios</h2>
+            <div class="card">
+                <div id="treemap-municipios" class="chart-container"></div>
+                <p class="insights-box">
+                    <strong>Insight:</strong> O Nordeste possui o maior numero de municipios (1.794), seguido pelo Sudeste (1.668).
+                    Minas Gerais lidera com 853 municipios, enquanto Roraima tem apenas 15.
+                </p>
+            </div>
+        </section>
+
+        <!-- Visualizacao 2: Top Estados -->
+        <section class="section">
+            <h2 class="section-title">Top 10 Estados por Populacao</h2>
+            <div class="card">
+                <div id="bar-populacao" class="chart-container"></div>
+            </div>
+        </section>
+
+        <!-- Visualizacao 3: Evolucao -->
+        <section class="section">
+            <h2 class="section-title">Evolucao Populacional</h2>
+            <div class="card">
+                <div id="line-evolucao" class="chart-container"></div>
+            </div>
+        </section>
+
+        <!-- Codigo Exemplo -->
+        <section class="section">
+            <h2 class="section-title">Exemplo de Uso</h2>
+            <div class="card">
+                <h4>Extrair dados via CLI:</h4>
+                <div class="code-block">
+<span class="comment"># Extrair todos os dados para CSV</span>
+python main.py --extract all --output csv
+
+<span class="comment"># Extrair apenas municipios</span>
+python main.py --extract localidades --output csv
+
+<span class="comment"># Extrair para banco de dados PostgreSQL</span>
+python main.py --extract all --output database
+                </div>
+
+                <h4 style="margin-top: 1.5rem;">Codigo Python:</h4>
+                <div class="code-block">
+<span class="keyword">import</span> requests
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># API do IBGE</span>
+IBGE_API = <span class="string">"https://servicodados.ibge.gov.br/api/v1"</span>
+
+<span class="comment"># Extrair estados</span>
+response = requests.get(<span class="string">f"{IBGE_API}/localidades/estados"</span>)
+estados = response.json()
+
+df_estados = pd.DataFrame([{
+    <span class="string">'id'</span>: e[<span class="string">'id'</span>],
+    <span class="string">'sigla'</span>: e[<span class="string">'sigla'</span>],
+    <span class="string">'nome'</span>: e[<span class="string">'nome'</span>],
+    <span class="string">'regiao'</span>: e[<span class="string">'regiao'</span>][<span class="string">'nome'</span>]
+} <span class="keyword">for</span> e <span class="keyword">in</span> estados])
+
+<span class="keyword">print</span>(<span class="string">f'Estados: {len(df_estados)}'</span>)
+                </div>
+            </div>
+        </section>
+
+        <!-- Resultados -->
+        <section class="section">
+            <h2 class="section-title">Resultados do Pipeline</h2>
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Etapa</th>
+                                <th>Descricao</th>
+                                <th>Registros</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Extract</strong></td>
+                                <td>Regioes do Brasil</td>
+                                <td>5</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Extract</strong></td>
+                                <td>Estados + DF</td>
+                                <td>27</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Extract</strong></td>
+                                <td>Municipios</td>
+                                <td>5.570</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Extract</strong></td>
+                                <td>Populacao (2021-2024)</td>
+                                <td>108</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Transform</strong></td>
+                                <td>Validacao Pydantic</td>
+                                <td>-</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Load</strong></td>
+                                <td>CSV / PostgreSQL</td>
+                                <td>-</td>
+                                <td><span class="badge badge-success">OK</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Links -->
+        <section class="section">
+            <h2 class="section-title">Acessar Projeto</h2>
+            <div class="card" style="text-align: center;">
+                <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb" class="btn btn-primary" target="_blank">
+                    Executar no Google Colab
+                </a>
+                <a href="https://github.com/maxwellmelo/portfolio-data-science/tree/main/projeto1-etl-ibge" class="btn btn-outline" target="_blank" style="margin-left: 1rem;">
+                    Ver Codigo no GitHub
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Desenvolvido por <strong>Maxwell</strong> - Especialista em Dados</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="https://github.com/maxwellmelo/portfolio-data-science" target="_blank">GitHub</a>
+        </p>
+    </footer>
+
+    <!-- Plotly Charts -->
+    <script>
+        // Dados para o Treemap
+        var treemapData = [{
+            type: "treemap",
+            labels: ["Brasil",
+                     "Norte", "Nordeste", "Sudeste", "Sul", "Centro-Oeste",
+                     "AC", "AM", "AP", "PA", "RO", "RR", "TO",
+                     "AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE",
+                     "ES", "MG", "RJ", "SP",
+                     "PR", "RS", "SC",
+                     "DF", "GO", "MS", "MT"],
+            parents: ["",
+                      "Brasil", "Brasil", "Brasil", "Brasil", "Brasil",
+                      "Norte", "Norte", "Norte", "Norte", "Norte", "Norte", "Norte",
+                      "Nordeste", "Nordeste", "Nordeste", "Nordeste", "Nordeste", "Nordeste", "Nordeste", "Nordeste", "Nordeste",
+                      "Sudeste", "Sudeste", "Sudeste", "Sudeste",
+                      "Sul", "Sul", "Sul",
+                      "Centro-Oeste", "Centro-Oeste", "Centro-Oeste", "Centro-Oeste"],
+            values: [5570,
+                     450, 1794, 1668, 1191, 467,
+                     22, 62, 16, 144, 52, 15, 139,
+                     102, 417, 184, 217, 223, 185, 224, 167, 75,
+                     78, 853, 92, 645,
+                     399, 497, 295,
+                     1, 246, 79, 141],
+            textinfo: "label+value",
+            marker: {
+                colorscale: 'Blues'
+            }
+        }];
+
+        var treemapLayout = {
+            title: 'Distribuicao de Municipios por Regiao e Estado',
+            height: 500,
+            margin: {t: 50, l: 25, r: 25, b: 25}
+        };
+
+        Plotly.newPlot('treemap-municipios', treemapData, treemapLayout, {responsive: true});
+
+        // Grafico de Barras - Populacao
+        var barData = [{
+            type: 'bar',
+            x: [44.4, 21.3, 16.1, 14.1, 11.4, 9.1, 8.8, 7.6, 7.1, 6.2],
+            y: ['Sao Paulo', 'Minas Gerais', 'Rio de Janeiro', 'Bahia', 'Parana',
+                'Rio Grande do Sul', 'Pernambuco', 'Ceara', 'Para', 'Santa Catarina'],
+            orientation: 'h',
+            marker: {
+                color: ['#2E86AB', '#3498db', '#5dade2', '#85c1e9', '#aed6f1',
+                        '#d4e6f1', '#d5dbdb', '#e5e8e8', '#f0f3f4', '#f8f9f9']
+            },
+            text: ['44.4M', '21.3M', '16.1M', '14.1M', '11.4M', '9.1M', '8.8M', '7.6M', '7.1M', '6.2M'],
+            textposition: 'outside'
+        }];
+
+        var barLayout = {
+            title: 'Top 10 Estados por Populacao (2024)',
+            xaxis: {title: 'Populacao (milhoes)'},
+            yaxis: {autorange: 'reversed'},
+            height: 450,
+            margin: {l: 120, r: 50, t: 50, b: 50}
+        };
+
+        Plotly.newPlot('bar-populacao', barData, barLayout, {responsive: true});
+
+        // Grafico de Linha - Evolucao
+        var lineData = [
+            {x: [2021, 2022, 2023, 2024], y: [46.6, 46.0, 44.4, 44.5], name: 'Sao Paulo', mode: 'lines+markers'},
+            {x: [2021, 2022, 2023, 2024], y: [21.4, 21.2, 21.3, 21.3], name: 'Minas Gerais', mode: 'lines+markers'},
+            {x: [2021, 2022, 2023, 2024], y: [17.5, 17.1, 16.1, 16.1], name: 'Rio de Janeiro', mode: 'lines+markers'},
+            {x: [2021, 2022, 2023, 2024], y: [15.0, 14.8, 14.1, 14.2], name: 'Bahia', mode: 'lines+markers'},
+            {x: [2021, 2022, 2023, 2024], y: [11.6, 11.5, 11.4, 11.5], name: 'Parana', mode: 'lines+markers'}
+        ];
+
+        var lineLayout = {
+            title: 'Evolucao Populacional dos 5 Maiores Estados (milhoes)',
+            xaxis: {title: 'Ano', tickmode: 'array', tickvals: [2021, 2022, 2023, 2024]},
+            yaxis: {title: 'Populacao (milhoes)'},
+            height: 400,
+            legend: {orientation: 'h', y: -0.2}
+        };
+
+        Plotly.newPlot('line-evolucao', lineData, lineLayout, {responsive: true});
+    </script>
+</body>
+</html>

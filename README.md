@@ -14,6 +14,8 @@
 
 **ETL | Machine Learning | Dashboards | APIs REST | Data Privacy**
 
+### [Ver Portfolio Online](https://maxwellmelo.github.io/portfolio-data-science/)
+
 [Notebooks Demo](#notebooks-demonstrativos) | [Projetos](#projetos) | [Tecnologias](#tecnologias-e-competencias)
 
 </div>
@@ -64,19 +66,20 @@ Desmatamento Brasil
 
 ---
 
-## Notebooks Demonstrativos
+## Demonstracoes Online
 
-Cada projeto possui um notebook interativo com visualizacoes Plotly. **Clique para abrir no Google Colab** e executar:
+Visualize os resultados de cada projeto diretamente no navegador (sem executar codigo):
 
-| # | Projeto | Notebook | Executar |
-|:-:|---------|----------|:--------:|
-| 1 | ETL IBGE | `demo_etl_ibge.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb) |
-| 2 | Dashboard Ambiental | `demo_desmatamento.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb) |
-| 3 | Modelo Preditivo | `demo_modelo_safras.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) |
-| 4 | Integracao Multissetorial | `demo_dados_piaui.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) |
-| 5 | Compliance LGPD | `demo_compliance_lgpd.ipynb` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) |
+| # | Projeto | Ver Resultados | Executar Codigo |
+|:-:|---------|:--------------:|:---------------:|
+| 1 | ETL IBGE | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto1-etl-ibge.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto1-etl-ibge/notebooks/demo_etl_ibge.ipynb) |
+| 2 | Dashboard Ambiental | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto2-dashboard-ambiental.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto2-dashboard-ambiental/notebooks/demo_desmatamento.ipynb) |
+| 3 | Modelo Preditivo | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto3-modelo-preditivo.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb) |
+| 4 | Integracao Multissetorial | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto4-integracao-multissetorial.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto4-integracao-multissetorial/notebooks/demo_dados_piaui.ipynb) |
+| 5 | Compliance LGPD | [Ver Pagina](https://maxwellmelo.github.io/portfolio-data-science/projetos/projeto5-compliance-lgpd.html) | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb) |
 
-> Clique no badge para abrir no Google Colab e execute todas as celulas (Runtime > Run all).
+> **Ver Pagina**: Visualize graficos e resultados sem executar codigo
+> **Colab**: Execute o notebook completo no Google Colab
 
 ---
 

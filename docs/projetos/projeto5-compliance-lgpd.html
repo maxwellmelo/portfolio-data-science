@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance LGPD - Portfolio Data Science</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">Portfolio Data Science</a>
+            <div class="nav-links">
+                <a href="../index.html">Inicio</a>
+                <a href="projeto1-etl-ibge.html">ETL IBGE</a>
+                <a href="projeto2-dashboard-ambiental.html">Dashboard Ambiental</a>
+                <a href="projeto3-modelo-preditivo.html">Modelo Preditivo</a>
+                <a href="projeto4-integracao-multissetorial.html">Integracao PI</a>
+                <a href="projeto5-compliance-lgpd.html">Compliance LGPD</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="header" style="background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);">
+        <h1>Sistema de Compliance LGPD</h1>
+        <p>Auditoria e Anonimizacao de Dados Pessoais</p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-primary">Python</span>
+            <span class="badge badge-secondary">Regex</span>
+            <span class="badge badge-success">7 Metodos</span>
+            <span class="badge badge-warning">LGPD</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card" style="background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);">
+                <span class="stat-value">7</span>
+                <span class="stat-label">Metodos Anonimizacao</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #DC3545 0%, #a71d2a 100%);">
+                <span class="stat-value">15+</span>
+                <span class="stat-label">Tipos PII Detectados</span>
+            </div>
+            <div class="stat-card success">
+                <span class="stat-value">100%</span>
+                <span class="stat-label">Reducao de Risco</span>
+            </div>
+            <div class="stat-card warning">
+                <span class="stat-value">4</span>
+                <span class="stat-label">Niveis de Risco</span>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2 class="section-title">Sobre o Projeto</h2>
+            <div class="card">
+                <p>Ferramenta automatizada para identificacao, classificacao e anonimizacao de <strong>dados pessoais (PII)</strong> em conformidade com a Lei Geral de Protecao de Dados (LGPD). O sistema detecta dados sensiveis e aplica tecnicas de anonimizacao para protecao da privacidade.</p>
+
+                <div class="insights-box">
+                    <h4>Referencias LGPD</h4>
+                    <ul>
+                        <li><strong>Art. 5, II:</strong> Definicao de dados anonimizados</li>
+                        <li><strong>Art. 12:</strong> Anonimizacao como alternativa ao consentimento</li>
+                        <li><strong>Art. 6, III:</strong> Principio da necessidade</li>
+                        <li><strong>Art. 46:</strong> Medidas de seguranca</li>
+                    </ul>
+                </div>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Python 3.11+</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">Faker</span>
+                    <span class="tech-tag">Regex</span>
+                    <span class="tech-tag">Hashlib</span>
+                    <span class="tech-tag">Plotly</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Tipos de PII Detectados</h2>
+            <div class="card">
+                <div id="chart-pii" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Metodos de Anonimizacao</h2>
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metodo</th>
+                                <th>Descricao</th>
+                                <th>Exemplo</th>
+                                <th>Reversivel?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>mask</strong></td>
+                                <td>Substitui caracteres por *</td>
+                                <td>123.456.789-00 → 123.***.***-00</td>
+                                <td><span class="badge" style="background:#DC3545;color:white;">Nao</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>hash</strong></td>
+                                <td>Hash SHA-256 com salt</td>
+                                <td>joao@email.com → a1b2c3d4e5f6</td>
+                                <td><span class="badge" style="background:#DC3545;color:white;">Nao</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>pseudonymize</strong></td>
+                                <td>Substitui por dado falso</td>
+                                <td>Joao Silva → Maria Santos</td>
+                                <td><span class="badge" style="background:#DC3545;color:white;">Nao</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>generalize</strong></td>
+                                <td>Reduz precisao (faixas)</td>
+                                <td>R$ 5.432,00 → Faixa 3k-6k</td>
+                                <td><span class="badge" style="background:#DC3545;color:white;">Nao</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>suppress</strong></td>
+                                <td>Remove completamente</td>
+                                <td>(11) 99999-9999 → [SUPRIMIDO]</td>
+                                <td><span class="badge" style="background:#DC3545;color:white;">Nao</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>tokenize</strong></td>
+                                <td>Substitui por token unico</td>
+                                <td>email@test.com → EMAIL_00001</td>
+                                <td><span class="badge badge-success">Sim</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>noise</strong></td>
+                                <td>Adiciona variacao aleatoria</td>
+                                <td>R$ 5.000,00 → R$ 4.872,34</td>
+                                <td><span class="badge" style="background:#DC3545;color:white;">Nao</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Matriz de Risco</h2>
+            <div class="card">
+                <div id="chart-risco" class="chart-container"></div>
+                <div class="insights-box">
+                    <h4>Classificacao de Risco LGPD</h4>
+                    <ul>
+                        <li><strong style="color:#DC3545;">CRITICO:</strong> CPF, CNPJ, RG - Identificadores unicos</li>
+                        <li><strong style="color:#FD7E14;">ALTO:</strong> Nome, E-mail, Salario - Dados sensiveis</li>
+                        <li><strong style="color:#FFC107;">MEDIO:</strong> Telefone, Endereco, Data Nascimento</li>
+                        <li><strong style="color:#28A745;">BAIXO:</strong> CEP, Cidade, Estado</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Resultado: Antes vs Depois</h2>
+            <div class="card">
+                <div id="chart-comparativo" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Exemplo de Anonimizacao</h2>
+            <div class="card">
+                <h4>Dados Originais:</h4>
+                <div class="code-block">
+{
+    <span class="string">"nome"</span>: <span class="string">"Joao Pedro Silva"</span>,
+    <span class="string">"cpf"</span>: <span class="string">"123.456.789-00"</span>,
+    <span class="string">"email"</span>: <span class="string">"joao.silva@empresa.com"</span>,
+    <span class="string">"telefone"</span>: <span class="string">"(11) 98765-4321"</span>,
+    <span class="string">"salario"</span>: <span class="number">8500.00</span>
+}
+                </div>
+
+                <h4 style="margin-top: 1.5rem;">Dados Anonimizados:</h4>
+                <div class="code-block">
+{
+    <span class="string">"nome"</span>: <span class="string">"Maria Santos Oliveira"</span>,      <span class="comment">// pseudonymize</span>
+    <span class="string">"cpf"</span>: <span class="string">"a1b2c3d4e5f6"</span>,                <span class="comment">// hash</span>
+    <span class="string">"email"</span>: <span class="string">"jo**************om"</span>,         <span class="comment">// mask</span>
+    <span class="string">"telefone"</span>: <span class="string">"[SUPRIMIDO]"</span>,              <span class="comment">// suppress</span>
+    <span class="string">"salario"</span>: <span class="string">"Faixa 6k-10k"</span>               <span class="comment">// generalize</span>
+}
+                </div>
+
+                <h4 style="margin-top: 1.5rem;">Codigo Python:</h4>
+                <div class="code-block">
+<span class="keyword">from</span> src.scanners <span class="keyword">import</span> PIIScanner
+<span class="keyword">from</span> src.anonymizers <span class="keyword">import</span> DataAnonymizer
+
+<span class="comment"># Scan de dados pessoais</span>
+scanner = PIIScanner()
+resultado = scanner.scan(df, source_name=<span class="string">'clientes.csv'</span>)
+
+<span class="keyword">print</span>(<span class="string">f'PIIs encontrados: {len(resultado.pii_found)}'</span>)
+<span class="keyword">print</span>(<span class="string">f'Riscos criticos: {resultado.risk_summary["critico"]}'</span>)
+
+<span class="comment"># Aplicar anonimizacao</span>
+anonymizer = DataAnonymizer()
+df_anonimizado = anonymizer.anonymize_dataframe(df, config)
+
+<span class="comment"># Verificar resultado</span>
+resultado_pos = scanner.scan(df_anonimizado)
+<span class="keyword">print</span>(<span class="string">f'Reducao de risco: {reducao}%'</span>)
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Sumario Executivo</h2>
+            <div class="card">
+                <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 2rem; border-radius: 10px; text-align: center;">
+                    <h3 style="color: #155724; margin-bottom: 1rem;">STATUS: CONFORME LGPD</h3>
+                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <strong style="font-size: 2rem; color: #155724;">100</strong>
+                            <p style="color: #155724;">Registros Analisados</p>
+                        </div>
+                        <div>
+                            <strong style="font-size: 2rem; color: #155724;">9</strong>
+                            <p style="color: #155724;">PIIs Detectados</p>
+                        </div>
+                        <div>
+                            <strong style="font-size: 2rem; color: #155724;">8</strong>
+                            <p style="color: #155724;">Colunas Anonimizadas</p>
+                        </div>
+                        <div>
+                            <strong style="font-size: 2rem; color: #155724;">100%</strong>
+                            <p style="color: #155724;">Reducao de Risco</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Acessar Projeto</h2>
+            <div class="card" style="text-align: center;">
+                <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto5-compliance-lgpd/notebooks/demo_compliance_lgpd.ipynb" class="btn btn-primary" target="_blank">
+                    Executar no Google Colab
+                </a>
+                <a href="https://github.com/maxwellmelo/portfolio-data-science/tree/main/projeto5-compliance-lgpd" class="btn btn-outline" target="_blank" style="margin-left: 1rem;">
+                    Ver Codigo no GitHub
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Desenvolvido por <strong>Maxwell</strong> - Especialista em Dados</p>
+        <p style="margin-top: 0.5rem;"><a href="https://github.com/maxwellmelo/portfolio-data-science" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script>
+        // PIIs Detectados
+        var piiData = [{
+            type: 'bar',
+            x: ['CPF', 'Nome', 'Email', 'Salario', 'Telefone', 'Endereco', 'Data Nasc.', 'CEP'],
+            y: [100, 100, 100, 100, 100, 100, 100, 100],
+            marker: {
+                color: ['#DC3545', '#FD7E14', '#FD7E14', '#FD7E14', '#FFC107', '#FFC107', '#FFC107', '#28A745']
+            },
+            text: ['Critico', 'Alto', 'Alto', 'Alto', 'Medio', 'Medio', 'Medio', 'Baixo'],
+            textposition: 'outside'
+        }];
+
+        var piiLayout = {
+            title: 'PIIs Detectados por Coluna e Nivel de Risco',
+            yaxis: {title: 'Ocorrencias'},
+            height: 400
+        };
+
+        Plotly.newPlot('chart-pii', piiData, piiLayout, {responsive: true});
+
+        // Matriz de Risco
+        var riscoData = [{
+            type: 'pie',
+            labels: ['Critico', 'Alto', 'Medio', 'Baixo'],
+            values: [1, 3, 3, 1],
+            marker: {colors: ['#DC3545', '#FD7E14', '#FFC107', '#28A745']},
+            hole: 0.4,
+            textinfo: 'label+value'
+        }];
+
+        var riscoLayout = {
+            title: 'Distribuicao por Nivel de Risco',
+            height: 400,
+            annotations: [{text: '8<br>PIIs', x: 0.5, y: 0.5, font: {size: 18}, showarrow: false}]
+        };
+
+        Plotly.newPlot('chart-risco', riscoData, riscoLayout, {responsive: true});
+
+        // Comparativo Antes vs Depois
+        var compData = [
+            {
+                type: 'bar',
+                name: 'Antes da Anonimizacao',
+                x: ['Critico', 'Alto', 'Medio', 'Baixo'],
+                y: [1, 3, 3, 1],
+                marker: {color: '#A23B72'}
+            },
+            {
+                type: 'bar',
+                name: 'Depois da Anonimizacao',
+                x: ['Critico', 'Alto', 'Medio', 'Baixo'],
+                y: [0, 0, 0, 0],
+                marker: {color: '#18A558'}
+            }
+        ];
+
+        var compLayout = {
+            title: 'Reducao de Risco Apos Anonimizacao',
+            yaxis: {title: 'Quantidade de Colunas'},
+            barmode: 'group',
+            height: 400
+        };
+
+        Plotly.newPlot('chart-comparativo', compData, compLayout, {responsive: true});
+    </script>
+</body>
+</html>

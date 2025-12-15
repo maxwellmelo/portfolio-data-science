@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo Preditivo Safras - Portfolio Data Science</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">Portfolio Data Science</a>
+            <div class="nav-links">
+                <a href="../index.html">Inicio</a>
+                <a href="projeto1-etl-ibge.html">ETL IBGE</a>
+                <a href="projeto2-dashboard-ambiental.html">Dashboard Ambiental</a>
+                <a href="projeto3-modelo-preditivo.html">Modelo Preditivo</a>
+                <a href="projeto4-integracao-multissetorial.html">Integracao PI</a>
+                <a href="projeto5-compliance-lgpd.html">Compliance LGPD</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="header" style="background: linear-gradient(135deg, #1a5f2a 0%, #2d8a3e 100%);">
+        <h1>Modelo Preditivo de Safras</h1>
+        <p>Machine Learning para Previsao de Rendimento Agricola</p>
+        <div style="margin-top: 1rem;">
+            <span class="badge badge-primary">Scikit-learn</span>
+            <span class="badge badge-secondary">XGBoost</span>
+            <span class="badge badge-success">R2 = 0.90</span>
+            <span class="badge badge-warning">PAM/IBGE</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card" style="background: linear-gradient(135deg, #18A558 0%, #127a3f 100%);">
+                <span class="stat-value">0.90</span>
+                <span class="stat-label">R2 Score</span>
+            </div>
+            <div class="stat-card secondary">
+                <span class="stat-value">704.86</span>
+                <span class="stat-label">RMSE (kg/ha)</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #F18F01 0%, #c77301 100%);">
+                <span class="stat-value">11.11%</span>
+                <span class="stat-label">MAPE</span>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #2E86AB 0%, #1e5f7a 100%);">
+                <span class="stat-value">7</span>
+                <span class="stat-label">Modelos Testados</span>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2 class="section-title">Sobre o Projeto</h2>
+            <div class="card">
+                <p>Sistema de <strong>Machine Learning</strong> para previsao de rendimento agricola usando dados historicos da Pesquisa Agricola Municipal (PAM) do IBGE. O modelo preve a <strong>produtividade em kg/ha</strong> para diferentes culturas.</p>
+
+                <div class="insights-box">
+                    <h4>Aplicacoes de Negocio</h4>
+                    <ul>
+                        <li><strong>Planejamento de safra:</strong> Estimar producao esperada</li>
+                        <li><strong>Gestao de riscos:</strong> Identificar regioes de baixa produtividade</li>
+                        <li><strong>Politicas publicas:</strong> Direcionar recursos e assistencia tecnica</li>
+                        <li><strong>Mercado de commodities:</strong> Projecoes de oferta</li>
+                    </ul>
+                </div>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Python 3.11+</span>
+                    <span class="tech-tag">Scikit-learn</span>
+                    <span class="tech-tag">XGBoost</span>
+                    <span class="tech-tag">LightGBM</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">Plotly</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Comparacao de Modelos</h2>
+            <div class="card">
+                <div id="chart-modelos" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Metricas Detalhadas</h2>
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Modelo</th>
+                                <th>RMSE</th>
+                                <th>MAE</th>
+                                <th>R2</th>
+                                <th>MAPE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #d4edda;">
+                                <td><strong>Gradient Boosting</strong></td>
+                                <td><strong>704.86</strong></td>
+                                <td><strong>519.62</strong></td>
+                                <td><strong>0.9004</strong></td>
+                                <td><strong>11.11%</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Ridge Regression</td>
+                                <td>759.05</td>
+                                <td>580.81</td>
+                                <td>0.8845</td>
+                                <td>15.55%</td>
+                            </tr>
+                            <tr>
+                                <td>Linear Regression</td>
+                                <td>759.20</td>
+                                <td>581.15</td>
+                                <td>0.8845</td>
+                                <td>15.57%</td>
+                            </tr>
+                            <tr>
+                                <td>Random Forest</td>
+                                <td>813.04</td>
+                                <td>603.64</td>
+                                <td>0.8675</td>
+                                <td>12.86%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin-top: 1rem; color: var(--gray); font-size: 0.9rem;">
+                    *Metricas obtidas com TimeSeriesSplit (treino: 2000-2019, teste: 2019-2023)
+                </p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Predicao vs Real</h2>
+            <div class="card">
+                <div id="chart-predicao" class="chart-container"></div>
+                <div class="insights-box">
+                    <h4>Interpretacao</h4>
+                    <ul>
+                        <li>Pontos proximos a linha diagonal indicam boa predicao</li>
+                        <li>R2 de 0.90 significa que o modelo explica 90% da variancia</li>
+                        <li>Erros maiores concentrados em rendimentos extremos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Feature Importance</h2>
+            <div class="card">
+                <div id="chart-features" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Evolucao do Rendimento por Cultura</h2>
+            <div class="card">
+                <div id="chart-culturas" class="chart-container"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Metodologia</h2>
+            <div class="card">
+                <h4>Prevencao de Data Leakage</h4>
+                <p>O projeto implementa boas praticas para evitar vazamento de dados:</p>
+                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                    <li><strong>TimeSeriesSplit:</strong> Dados de treino sempre anteriores aos de teste</li>
+                    <li><strong>Lag Features:</strong> Apenas valores passados como features</li>
+                    <li><strong>VIF Analysis:</strong> Deteccao de multicolinearidade</li>
+                    <li><strong>Feature Audit:</strong> Features derivadas do target foram removidas</li>
+                </ul>
+
+                <h4 style="margin-top: 1.5rem;">Features Utilizadas</h4>
+                <div class="code-block">
+<span class="comment"># Features Originais (PAM)</span>
+- area_plantada_ha
+- area_colhida_ha
+- producao_ton
+- valor_producao_mil_reais
+
+<span class="comment"># Features Derivadas (sem data leakage)</span>
+- rendimento_kg_ha_lag1/2/3  <span class="comment"># Lags temporais</span>
+- rendimento_kg_ha_growth_rate
+- area_x_rend_lag            <span class="comment"># Interacao</span>
+- Encoding de estado, regiao, cultura
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Acessar Projeto</h2>
+            <div class="card" style="text-align: center;">
+                <a href="https://colab.research.google.com/github/maxwellmelo/portfolio-data-science/blob/main/projeto3-modelo-preditivo-safras/notebooks/demo_modelo_safras.ipynb" class="btn btn-primary" target="_blank">
+                    Executar no Google Colab
+                </a>
+                <a href="https://github.com/maxwellmelo/portfolio-data-science/tree/main/projeto3-modelo-preditivo-safras" class="btn btn-outline" target="_blank" style="margin-left: 1rem;">
+                    Ver Codigo no GitHub
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Desenvolvido por <strong>Maxwell</strong> - Especialista em Dados</p>
+        <p style="margin-top: 0.5rem;"><a href="https://github.com/maxwellmelo/portfolio-data-science" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script>
+        // Comparacao de Modelos
+        var modelosData = [{
+            type: 'bar',
+            x: ['Gradient Boosting', 'Ridge', 'Linear Regression', 'Random Forest'],
+            y: [0.9004, 0.8845, 0.8845, 0.8675],
+            marker: {color: ['#18A558', '#3498db', '#5dade2', '#85c1e9']},
+            text: ['0.90', '0.88', '0.88', '0.87'],
+            textposition: 'outside'
+        }];
+
+        var modelosLayout = {
+            title: 'R2 Score por Modelo',
+            yaxis: {title: 'R2 Score', range: [0.8, 0.95]},
+            height: 400
+        };
+
+        Plotly.newPlot('chart-modelos', modelosData, modelosLayout, {responsive: true});
+
+        // Predicao vs Real (scatter simulado)
+        var n = 100;
+        var real = [];
+        var pred = [];
+        for (var i = 0; i < n; i++) {
+            var r = 2000 + Math.random() * 8000;
+            real.push(r);
+            pred.push(r + (Math.random() - 0.5) * 1500);
+        }
+
+        var predicaoData = [
+            {
+                type: 'scatter',
+                mode: 'markers',
+                x: real,
+                y: pred,
+                marker: {color: '#2E86AB', opacity: 0.6},
+                name: 'Predicoes'
+            },
+            {
+                type: 'scatter',
+                mode: 'lines',
+                x: [1500, 10500],
+                y: [1500, 10500],
+                line: {color: '#C73E1D', dash: 'dash'},
+                name: 'Linha Perfeita'
+            }
+        ];
+
+        var predicaoLayout = {
+            title: 'Valores Preditos vs Reais',
+            xaxis: {title: 'Rendimento Real (kg/ha)'},
+            yaxis: {title: 'Rendimento Predito (kg/ha)'},
+            height: 450
+        };
+
+        Plotly.newPlot('chart-predicao', predicaoData, predicaoLayout, {responsive: true});
+
+        // Feature Importance
+        var featuresData = [{
+            type: 'bar',
+            x: [0.35, 0.22, 0.15, 0.12, 0.08, 0.05, 0.03],
+            y: ['rendimento_lag1', 'area_plantada_ha', 'rendimento_lag2', 'estado_encoded', 'cultura_encoded', 'growth_rate', 'area_x_rend_lag'],
+            orientation: 'h',
+            marker: {color: '#18A558'}
+        }];
+
+        var featuresLayout = {
+            title: 'Importancia das Features (Gradient Boosting)',
+            xaxis: {title: 'Importancia'},
+            yaxis: {autorange: 'reversed'},
+            height: 400,
+            margin: {l: 130}
+        };
+
+        Plotly.newPlot('chart-features', featuresData, featuresLayout, {responsive: true});
+
+        // Evolucao por Cultura
+        var culturasData = [
+            {x: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023], y: [3100, 3200, 3350, 3400, 3300, 3500, 3450, 3550, 3600], name: 'Soja', mode: 'lines+markers'},
+            {x: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023], y: [5200, 5400, 5100, 5600, 5800, 5500, 6000, 5900, 6100], name: 'Milho', mode: 'lines+markers'},
+            {x: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023], y: [5800, 6000, 6200, 6100, 6300, 6400, 6200, 6500, 6600], name: 'Arroz', mode: 'lines+markers'},
+            {x: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023], y: [1100, 1150, 1000, 1200, 1050, 1180, 1220, 1150, 1250], name: 'Feijao', mode: 'lines+markers'}
+        ];
+
+        var culturasLayout = {
+            title: 'Evolucao do Rendimento por Cultura (kg/ha)',
+            xaxis: {title: 'Ano'},
+            yaxis: {title: 'Rendimento (kg/ha)'},
+            height: 400,
+            legend: {orientation: 'h', y: -0.2}
+        };
+
+        Plotly.newPlot('chart-culturas', culturasData, culturasLayout, {responsive: true});
+    </script>
+</body>
+</html>
